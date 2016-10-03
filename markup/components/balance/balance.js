@@ -1,29 +1,24 @@
-// import CreateJS
-// import TweenMax
 import { utils } from 'components/utils/utils';
 import { storage } from 'components/storage/storage';
 import { events } from 'components/events/events';
 
 import { parameters } from 'components/balance/parameters';
 
-// /* eslint-disable no-undef */
-/* eslint-disable no-use-before-define */
-
 export let balance = (function () {
 
     let config;
     const defaultConfig = {
-        textDelta: 20
+        textDelta: 20,
+        bottomLineHeight: 30,
+        topLineHeight: 40
     };
 
-    let stage;
     const c = createjs;
-    const w = utils.width;
-    const h = utils.height;
     const balanceContainer = new c.Container().set({ name: 'balanceContainer' });
+    const balanceTextContainer = new c.Container().set({ name: 'balanceTextContainer' });
 
-    const balanceText = {};
-    const balanceData = {};
+    let balanceText = {};
+    let balanceData = {};
     let currencySymbol;
 
     function start(configObj) {
@@ -31,13 +26,12 @@ export let balance = (function () {
     }
 
     function initBalance() {
-        stage = storage.read('stage');
+
         const data = storage.read('initState');
+
         balanceData.linesLength = storage.read('lines').length;
 
-        balanceData.coinsSteps = data.CoinValue.map((value) => {
-            return (value / 100).toFixed(2);
-        });
+        balanceData.coinsSteps = data.CoinValue.map((value) => { return (value / 100).toFixed(2); });
         balanceData.betSteps = data.BetLevel;
 
         balanceData.coinsValue = balanceData.coinsSteps[0];
@@ -53,10 +47,49 @@ export let balance = (function () {
 
         currencySymbol = checkCurrency(balanceData.currency);
 
+        drawBalanceBG();
+        drawPanelButtons();
         writeBalance();
+
+    }
+
+    function drawBalanceBG() {
+
+        const footerBgDown = new c.Shape().set({name: 'footerBgDown'});
+        const footerBgUp = new c.Shape().set({name: 'footerBgUp'});
+        footerBgDown.graphics.beginFill('#000').drawRect(0, utils.height - config.bottomLineHeight, utils.width, config.bottomLineHeight);
+        footerBgUp.graphics.beginFill('rgba(0, 0, 0, 0.6)').drawRect(0, utils.height - config.bottomLineHeight - config.topLineHeight, utils.width, config.topLineHeight);
+
+        balanceContainer.addChild(footerBgDown, footerBgUp);
+
+    }
+
+    function drawPanelButtons() {
+
+        const loader = storage.read('loadResult');
+        const balanceButtons = new c.Container().set({ name: 'balanceButtons' });
+
+        const home = new c.Bitmap(loader.getResult('home')).set({
+            name: 'homeButton',
+            x: 15, // Magic Numbers
+            y: utils.height - 63 // Magic Numbers
+        });
+
+        home.on('click', (event) => {
+            utils.request('_Logout/', storage.read('sessionID'))
+                .then((response) => {
+                    console.log('Logout response:', response);
+                    window.history.back();
+                });
+        });
+
+        balanceButtons.addChild(home);
+        balanceContainer.addChild(balanceButtons);
+
     }
 
     function checkCurrency(currency) {
+
         if (currency === 'USD') {
             return '$ ';
         } else if (currency === 'EUR') {
@@ -66,16 +99,34 @@ export let balance = (function () {
         } else if (currency === 'RUB') {
             return '₽ ';
         }
+
     }
 
     function makeTextDelta(text1, text2, delta) {
+
         text1.x = text2.x - text2.getMeasuredWidth() / 2 - delta - text1.getMeasuredWidth();
+
     }
 
     function writeBalance() {
 
-        balanceText.coinsSum = new c.Text(balanceData.coinsSum, parameters.font, parameters.orangeColor).set(parameters.coinsSum);
-        balanceText.betSum = new c.Text(balanceData.betSum, parameters.font, parameters.orangeColor).set(parameters.betSum);
+        const stage = storage.read('stage');
+
+        if (storage.read('device') === 'mobile') {
+
+            balanceText.coinsSum = new c.Text(balanceData.coinsSum, parameters.font, parameters.orangeColor).set(parameters.coinsSum);
+            balanceText.betSum = new c.Text(balanceData.betSum, parameters.font, parameters.orangeColor).set(parameters.betSum);
+            balanceText.coinsSumText = new c.Text('Coins:', parameters.bigFont, parameters.color).set(parameters.coinsSumText);
+            balanceText.betSumText = new c.Text('Bet:', parameters.bigFont, parameters.color).set(parameters.betSumText);
+            makeTextDelta(balanceText.coinsSumText, balanceText.coinsSum, config.textDelta);
+
+        } else if (storage.read('device') === 'desktop') {
+
+            balanceText.coinsSum = new c.Text(balanceData.coinsSum, parameters.font, parameters.orangeColor).set(parameters.desktop.coinsSum);
+            balanceText.betSum = new c.Text(balanceData.betSum, parameters.font, parameters.orangeColor).set(parameters.desktop.betSum);
+
+        }
+
         balanceText.coinsCash = new c.Text(currencySymbol + balanceData.coinsCash, parameters.font, parameters.color).set(parameters.coinsCash);
         balanceText.betCash = new c.Text(currencySymbol + balanceData.betCash, parameters.font, parameters.color).set(parameters.betCash);
         balanceText.winCash = new c.Text(currencySymbol + balanceData.winCash, parameters.font, parameters.color).set(parameters.winCash);
@@ -83,13 +134,9 @@ export let balance = (function () {
         balanceText.coinsCashText = new c.Text('Cash:', parameters.font, parameters.greyColor).set(parameters.coinsCashText);
         balanceText.betCashText = new c.Text('Bet:', parameters.font, parameters.greyColor).set(parameters.betCashText);
         balanceText.winCashText = new c.Text('Win:', parameters.font, parameters.greyColor).set(parameters.winCashText);
-        balanceText.coinsSumText = new c.Text('Coins:', parameters.bigFont, parameters.color).set(parameters.coinsSumText);
-        balanceText.betSumText = new c.Text('Bet:', parameters.bigFont, parameters.color).set(parameters.betSumText);
-
-        makeTextDelta(balanceText.coinsSumText, balanceText.coinsSum, config.textDelta);
         makeTextDelta(balanceText.coinsCashText, balanceText.coinsCash, config.textDelta);
 
-        balanceContainer.addChild(
+        balanceTextContainer.addChild(
             balanceText.coinsSum,
             balanceText.coinsSumText,
             balanceText.betSum,
@@ -103,30 +150,31 @@ export let balance = (function () {
         );
 
         // Добавим баланс на сцену
-        const preloader = stage.getChildByName('preloaderContainer');
-        stage.addChildAt(balanceContainer, stage.getChildIndex(preloader) - 1);
-        balanceContainer.cache(0, 0, w, h);
+        balanceContainer.addChild(balanceTextContainer);
+        balanceContainer.cache(0, 0, utils.width, utils.height);
+        stage.addChildAt(balanceContainer, stage.getChildIndex(stage.getChildByName('preloaderContainer')));
 
         storage.write('currentBalance', balanceData);
         setTimeout(updateBalance, 500); // Для того чтобы подгрузились шрифты и отобразить нужным шрифтом.
     }
 
-    function writeCashBalance(container) {
-        const currentBalance = storage.read('currentBalance');
-
-        let coinsCash = new c.Text(currencySymbol + currentBalance.coinsCash, parameters.font, parameters.color).set(parameters.coinsCash);
-        let betCash = new c.Text(currencySymbol + currentBalance.betCash, parameters.font, parameters.color).set(parameters.betCash);
-        let winCash = new c.Text(currencySymbol + currentBalance.winCash, parameters.font, parameters.color).set(parameters.winCash);
-        let coinsCashText = new c.Text('Cash:', parameters.font, parameters.greyColor).set(parameters.coinsCashText);
-        let betCashText = new c.Text('Bet:', parameters.font, parameters.greyColor).set(parameters.betCashText);
-        let winCashText = new c.Text('Win:', parameters.font, parameters.greyColor).set(parameters.winCashText);
-
-        container.addChild(coinsCashText, betCashText, winCashText, coinsCash, betCash, winCash);
-
-        makeTextDelta(coinsCashText, coinsCash, config.textDelta);
-    }
+    // function writeCashBalance(container) {
+    //     const currentBalance = storage.read('currentBalance');
+    //
+    //     let coinsCash = new c.Text(currencySymbol + currentBalance.coinsCash, parameters.font, parameters.color).set(parameters.coinsCash);
+    //     let betCash = new c.Text(currencySymbol + currentBalance.betCash, parameters.font, parameters.color).set(parameters.betCash);
+    //     let winCash = new c.Text(currencySymbol + currentBalance.winCash, parameters.font, parameters.color).set(parameters.winCash);
+    //     let coinsCashText = new c.Text('Cash:', parameters.font, parameters.greyColor).set(parameters.coinsCashText);
+    //     let betCashText = new c.Text('Bet:', parameters.font, parameters.greyColor).set(parameters.betCashText);
+    //     let winCashText = new c.Text('Win:', parameters.font, parameters.greyColor).set(parameters.winCashText);
+    //
+    //     container.addChild(coinsCashText, betCashText, winCashText, coinsCash, betCash, winCash);
+    //
+    //     makeTextDelta(coinsCashText, coinsCash, config.textDelta);
+    // }
 
     function updateBalance() {
+
         if (balanceText.coinsSum.text !== balanceData.coinsSum) {
             balanceText.coinsSum.text = balanceData.coinsSum;
         }
@@ -143,7 +191,12 @@ export let balance = (function () {
             balanceText.winCash.text = currencySymbol + balanceData.winCash;
         }
 
-        makeTextDelta(balanceText.coinsSumText, balanceText.coinsSum, config.textDelta);
+        if (storage.read('device') === 'mobile') {
+            makeTextDelta(balanceText.coinsSumText, balanceText.coinsSum, config.textDelta);
+        } else if (storage.read('device') === 'desktop') {
+
+        }
+
         makeTextDelta(balanceText.coinsCashText, balanceText.coinsCash, config.textDelta);
 
         balanceContainer.updateCache();
@@ -220,7 +273,7 @@ export let balance = (function () {
         }
     }
 
-    function maxBet() {
+    function getMaxBet() {
         changeBet(true, true);
     }
 
@@ -251,19 +304,14 @@ export let balance = (function () {
         }
     }
 
-    function lowBalance() {
-        return balanceData.betSum > balanceData.coinsSum;
-    }
-
     return {
         start,
         initBalance,
-        writeCashBalance,
+        // writeCashBalance,
         updateBalance,
-        lowBalance,
         changeBet,
         changeCoins,
-        maxBet,
+        getMaxBet,
         startRoll,
         endRoll
     };
