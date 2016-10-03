@@ -7,10 +7,10 @@ export let init = (function () {
 
     let config;
     const defaultConfig = {
+        device: 'mobile',
         mode: 'normal',
         userID: 1,
-        casinoID: 1,
-        log: true
+        casinoID: 1
     };
 
     // qo2 - двери, qo5 - фри-спины, qos - стандартный режим
@@ -25,6 +25,7 @@ export let init = (function () {
 
     function start(configObj) {
         config = configObj || defaultConfig;
+        storage.write('device', config.device);
     }
 
     function checkPlayerState(state) {
