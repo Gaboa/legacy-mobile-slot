@@ -1,6 +1,6 @@
 var data = {
     canvas: {
-        defaults: {
+        hd: {
             width: 1280,
             height: 720
         }

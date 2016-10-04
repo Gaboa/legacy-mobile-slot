@@ -1,22 +1,29 @@
 export const preloaderManifest = [
-    {id: 'preloaderCoin', src: 'static/img/content/preloader/new/coin.json', type: 'spritesheet'},
-    {id: 'preloaderLine', src: 'static/img/content/preloader/new/line.json', type: 'spritesheet'}
+    {id: 'preloaderCoin', src: 'static/img/content/preloader/coin.json', type: 'spritesheet'},
+    {id: 'preloaderLine', src: 'static/img/content/preloader/line.json', type: 'spritesheet'}
 ];
 
 export const mainManifest = [
     // preloader module
-    {id: 'preloader', src: 'static/img/content/preloader/preloader.json', type: 'spritesheet'},
-    {id: 'preloaderSprite', src: 'static/img/content/preloader/sprite.json', type: 'spritesheet'},
+    {id: 'preloader', src: 'static/img/content/preloader/hd/preloader.json', type: 'spritesheet'},
+    {id: 'preloaderSprite', src: 'static/img/content/preloader/hd/sprite.json', type: 'spritesheet'},
+
     // bg module
-    {id: 'newBGLight', src: 'static/img/content/bg/newBGLight.png'},
-    {id: 'bg', src: 'static/img/content/bg/bg.json', type: 'spritesheet'},
-    {id: 'newGameMachine', src: 'static/img/content/new/gameMachine.png'},
+    {id: 'mainBG', src: 'static/img/content/bg/mainBG.png'},
+    {id: 'gameBG', src: 'static/img/content/bg/gameBG.png'},
+    {id: 'gameMachine', src: 'static/img/content/bg/gameMachine.png'},
+
+
+    // {id: 'bg', src: 'static/img/content/bg/bg.json', type: 'spritesheet'},
     {id: 'rules', src: 'static/img/content/bg/firstRules.png'},
     {id: 'fonar', src: 'static/img/content/bg/fonar.png'},
     {id: 'home', src: 'static/img/content/new/home.png'},
 
     // buttons module
     {id: 'buttons', src: 'static/img/content/buttons/buttons.json', type: 'spritesheet'},
+
+    // controls module
+    {id: 'controlsBG', src: 'static/img/content/controls/controlsBG.png'},
 
     // roll module
     {id: 'new_elements', src: 'static/img/content/new/elements_new3.json', type: 'spritesheet'},

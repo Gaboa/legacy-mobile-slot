@@ -31,7 +31,9 @@ export let win = (function () {
 
     function initWin() {
         stage = storage.read('stage');
-        const gameContainer = stage.getChildByName('gameContainer');
+        const mainContainer = storage.read('mainContainer');
+        const gameContainer = mainContainer.getChildByName('gameContainer');
+
         winLinesContainer = new c.Container().set({
             name: 'winLinesContainer',
             x: gameContainer.x,
@@ -42,8 +44,10 @@ export let win = (function () {
             x: gameContainer.x,
             y: gameContainer.y
         });
-        stage.addChildAt(winLinesContainer, 1);
-        stage.addChild(winRectsContainer);
+
+        mainContainer.addChildAt(winLinesContainer, 1);
+        mainContainer.addChild(winRectsContainer);
+
         winElements = findWinElements();
     }
 
@@ -51,7 +55,9 @@ export let win = (function () {
         const result = [];
         const columns = [];
         const winLines = storage.read('lines');
-        const gameContainer = stage.getChildByName('gameContainer');
+        const mainContainer = storage.read('mainContainer');
+        const gameContainer = mainContainer.getChildByName('gameContainer');
+
         for (let i = 0; i < 5; i++) {
             const column = gameContainer.getChildByName(`gameColumn${i}`);
             columns.push(column);
@@ -66,6 +72,7 @@ export let win = (function () {
             });
         });
         return result;
+
     }
 
     function drawLineShape(number) {
@@ -190,7 +197,7 @@ export let win = (function () {
             y: parameters[number].y - winRectsContainer.y + 5 // Magic Numbers
         });
         if (storage.readState('side') === 'right') {
-            lineFire.x += 150; // Magic Numbers
+            // lineFire.x += 150; // Magic Numbers
         }
         winRectsContainer.addChild(lineFire);
     }
@@ -268,7 +275,8 @@ export let win = (function () {
 
     function fireLizaAndCards(rowNumber) {
         const loader = storage.read('loadResult');
-        const gameContainer = stage.getChildByName('gameContainer');
+        const mainContainer = storage.read('mainContainer');
+        const gameContainer = mainContainer.getChildByName('gameContainer');
         const lizaWin = new c.Sprite(loader.getResult('lizaWin'), 'win').set({
             name: 'lizaWin',
             x: gameContainer.x + rowNumber * utils.elementWidth - 23, // Magic Numbers
@@ -277,7 +285,7 @@ export let win = (function () {
         lizaWin.on('animationend', function () {
             if (storage.read('rollResponse').BonusResults[0] === 'FreeSpinBonus') {
                 events.trigger('initFreeSpins');
-                stage.removeChild(lizaWin);
+                mainContainer.removeChild(lizaWin);
             }
         });
         lizaWin.on('change', function () {
@@ -285,7 +293,7 @@ export let win = (function () {
                 fireCards(lizaWin.x, lizaWin.y);
             }
         });
-        stage.addChild(lizaWin);
+        mainContainer.addChild(lizaWin);
     }
 
     function calcCardCoords(rot, x0, y0) {

@@ -16,6 +16,9 @@ export let bonuses = (function () {
     const w = utils.width;
     const h = utils.height;
 
+    let totalWinText;
+    let totalWinSum;
+
     function initBonusLevel() {
         const loader = storage.read('loadResult');
         const stage = storage.read('stage');
@@ -67,10 +70,10 @@ export let bonuses = (function () {
         let tl = new TimelineMax();
         tl.to(initBG, 0.4, {alpha: 1})
             .call(function () {
-                        currentLevel = 1;
-                        win.cleanWin();
-                        getBonusLevel();
-                    })
+                currentLevel = 1;
+                win.cleanWin();
+                getBonusLevel();
+            })
             .from(initYouWin, 0.4, {y: -400, alpha: 0}, '-=0.2')
             .from(initBonusLevel, 0.4, {y: 900, alpha: 0}, '-=0.2')
             .from(initLiza, 0.4, {x: -400, alpha: 0}, '-=0.2')
@@ -102,42 +105,67 @@ export let bonuses = (function () {
         let bonusBG = new createjs.Bitmap(loader.getResult('bonusBG_' + level)).set({
             name: 'bonusBG'
         });
-        const bonusBalance = new c.Container().set({
-            name: 'bonusBalance',
-            x: 75
-        });
-        const totalWinText = new createjs.Text('Total Win:', '24px Helvetica', '#dddddd').set({
-            name: 'totalWinText',
-            x: 10,
-            y: 658,
-            textAlign: 'center'
-        });
-        if (storage.read('bonusResponse').CurrentWinCoins && level !== 1) {
-            totalCount = storage.read('bonusResponse').CurrentWinCoins + firstWin + '';
+
+        let balanceContainer = stage.getChildByName('balanceContainer');
+        let balanceTextContainer = balanceContainer.getChildByName('balanceTextContainer');
+
+        if (!balanceTextContainer.getChildByName('totalWinText')) {
+            totalWinText = new createjs.Text('Total Win:', '24px Helvetica', '#dddddd').set({
+                name: 'totalWinText',
+                x: 85,
+                y: 658,
+                textAlign: 'center'
+            });
+            if (storage.read('bonusResponse').CurrentWinCoins && level !== 1) {
+                totalCount = storage.read('bonusResponse').CurrentWinCoins + firstWin + '';
+            } else {
+                totalCount = storage.read('rollResponse').TotalWinCoins + '';
+                firstWin = +totalCount;
+                firstCashWin = +storage.read('currentBalance').winCash;
+            }
+            totalWinSum = new createjs.Text(totalCount, '24px Helvetica', '#e8b075').set({
+                name: 'totalWinSum',
+                x: 85,
+                y: 658,
+                textAlign: 'center',
+                shadow: new c.Shadow('#e8b075', 0, 0, 15)
+            });
+            totalWinText.x = utils.width / 2 - 10 - totalWinText.getMeasuredWidth();
+            totalWinSum.x = totalWinText.x + 20 + totalWinText.getMeasuredWidth() / 2 + totalWinSum.getMeasuredWidth() / 2;
         } else {
-            totalCount = storage.read('rollResponse').TotalWinCoins + '';
-            firstWin = +totalCount;
-            firstCashWin = +storage.read('currentBalance').winCash;
+            totalCount = storage.read('bonusResponse').CurrentWinCoins + firstWin + '';
+            totalWinSum.text = totalCount;
+            balanceContainer.updateCache();
+
         }
-        const totalWinSum = new createjs.Text(totalCount, '24px Helvetica', '#e8b075').set({
-            name: 'totalWinSum',
-            x: 10,
-            y: 658,
-            textAlign: 'center',
-            shadow: new c.Shadow('#e8b075', 0, 0, 15)
-        });
-        totalWinText.x = utils.width / 2 - 10 - totalWinText.getMeasuredWidth();
-        totalWinSum.x = totalWinText.x + 20 + totalWinText.getMeasuredWidth() / 2 + totalWinSum.getMeasuredWidth() / 2;
+
         var footerBgDown = new c.Shape().set({
             name: 'footerBgDown'
         });
-        var footerBgUp = new c.Shape().set({
-            name: 'footerBgUp'
-        });
         footerBgDown.graphics.beginFill('rgba(0, 0, 0)').drawRect(0, h - 30, w, 30);
-        footerBgUp.graphics.beginFill('rgba(0, 0, 0, 0.6)').drawRect(0, h - 70, w, 40);
-        bonusBalance.addChild(footerBgDown, footerBgUp, totalWinText, totalWinSum);
-        balance.writeCashBalance(bonusBalance);
+        if (storage.read('device') === 'desktop') {
+            if (!balanceTextContainer.getChildByName('totalWinText')) {
+                let coinsSum = balanceTextContainer.getChildByName('coinsSum');
+                let betSum = balanceTextContainer.getChildByName('betSum');
+                coinsSum.visible = betSum.visible = false;
+                let footerBgUp = new c.Shape().set({ name: 'footerBgUp' });
+                footerBgUp.graphics.beginFill('rgba(0, 0, 0, 0.6)').drawRect(0, h - 70, w, 40);
+                balanceTextContainer.addChild(footerBgUp, totalWinText, totalWinSum);
+                balanceContainer.updateCache();
+            }
+        } else if (storage.read('device') === 'mobile') {
+            if (!balanceTextContainer.getChildByName('totalWinText')) {
+                let coinsText = balanceTextContainer.getChildByName('coinsSumText');
+                let betText = balanceTextContainer.getChildByName('betSumText');
+                let coinsSum = balanceTextContainer.getChildByName('coinsSum');
+                let betSum = balanceTextContainer.getChildByName('betSum');
+                coinsText.visible = betText.visible = coinsSum.visible = betSum.visible = false;
+                balanceTextContainer.addChild(totalWinText, totalWinSum);
+                balanceContainer.updateCache();
+            }
+        }
+        // bonusBalance.addChild(totalWinText, totalWinSum);
+        // balance.writeCashBalance(bonusBalance);
         if (data.BonusEnd) {
             var bonusWall = new createjs.Bitmap(loader.getResult('bonusFail_' + level)).set({
                 name: 'bonusWall'
@@ -213,11 +241,11 @@ export let bonuses = (function () {
                             showBonusWin(data.CurrentValue);
                         } else {
                             setTimeout(function () {
-                                events.trigger('finishBonusLevel')
-                            }, 750)
+                                events.trigger('finishBonusLevel');
+                            }, 750);
                         }
                     }
-                })
+                });
             }
 
             setClickEvent(door_1, darkness_1);
@@ -293,8 +321,8 @@ export let bonuses = (function () {
                             showBonusWin(data.CurrentValue);
                         } else {
                             setTimeout(function () {
-                                events.trigger('finishBonusLevel')
-                            }, 750)
+                                events.trigger('finishBonusLevel');
+                            }, 750);
                         }
                         door.on('animationend', function functionName() {
                             door.stop();
@@ -376,7 +404,7 @@ export let bonuses = (function () {
                                 createjs.Tween.get(coins)
                                 .to({alpha: 1}, 400);
                             });
-                            showBonusWin(data.CurrentValue, true, 3000)
+                            showBonusWin(data.CurrentValue, true, 3000);
                         } else {
                             console.log('Это fail выход из пятых дверей.');
                             door.on('animationend', function () {
@@ -385,7 +413,7 @@ export let bonuses = (function () {
                             });
                             createjs.Sound.play('muhaSound');
                             setTimeout(function () {
-                                events.trigger('finishBonusLevel')
+                                events.trigger('finishBonusLevel');
                             }, 1000);
                             // let fly = new createjs.Sprite(loader.getResult('bonusFly')).set({
                             //     x: door.x,
@@ -410,9 +438,9 @@ export let bonuses = (function () {
             bonusContainer.addChild(bonusBG, doorsContainer);
             stage.addChild(bonusContainer);
         }
-        bonusContainer.addChild(bonusBalance);
+        // bonusContainer.addChild(bonusBalance);
         if (stage.getChildIndex(stage.getChildByName('initContainer'))) {
-            stage.addChildAt(bonusContainer, stage.getChildIndex(stage.getChildByName('initContainer')));
+            stage.addChildAt(bonusContainer, stage.getChildIndex(stage.getChildByName('balanceContainer')));
         } else {
             stage.addChild(bonusContainer);
         }
@@ -434,8 +462,8 @@ export let bonuses = (function () {
             scaleY: 0.1
         });
         var bounds = winText.getBounds();
-			winText.x = stage.canvas.width - bounds.width >> 1;
-			winText.y = stage.canvas.height - bounds.height >> 1;
+        winText.x = stage.canvas.width - bounds.width >> 1;
+        winText.y = stage.canvas.height - bounds.height >> 1;
         let bonusContainer = stage.getChildByName('bonusContainer');
         bonusContainer.addChild(winText);
         createjs.Tween.get(winText)
@@ -448,20 +476,41 @@ export let bonuses = (function () {
                     } else {
                         events.trigger('finishBonusLevel');
                     }
-                }, time)
+                }, time);
 
             }
         );
     }
 
     function finishBonusLevel() {
+
+        const stage = storage.read('stage');
+        const balanceContainer = stage.getChildByName('balanceContainer');
+        const balanceTextContainer = balanceContainer.getChildByName('balanceTextContainer');
+
+        if (storage.read('device') === 'desktop') {
+            let footerBgUp = balanceTextContainer.getChildByName('footerBgUp');
+            let coinsSum = balanceTextContainer.getChildByName('coinsSum');
+            let betSum = balanceTextContainer.getChildByName('betSum');
+            coinsSum.visible = betSum.visible = true;
+            balanceTextContainer.removeChild(totalWinText, totalWinSum, footerBgUp);
+            balanceContainer.updateCache();
+        } else if (storage.read('device') === 'mobile') {
+            let coinsText = balanceTextContainer.getChildByName('coinsSumText');
+            let betText = balanceTextContainer.getChildByName('betSumText');
+            let coinsSum = balanceTextContainer.getChildByName('coinsSum');
+            let betSum = balanceTextContainer.getChildByName('betSum');
+            coinsText.visible = betText.visible = coinsSum.visible = betSum.visible = true;
+            balanceTextContainer.removeChild(totalWinText, totalWinSum);
+            balanceContainer.updateCache();
+        }
+
         storage.read('currentBalance').coinsCash = ((storage.read('currentBalance').coinsCash * 100 + +storage.read('currentBalance').winCash * 100) / 100).toFixed(2);
         storage.read('currentBalance').coinsSum = +storage.read('currentBalance').coinsSum + +totalCount;
 
         storage.changeState('lockedMenu', false);
         createjs.Sound.stop('doorsAmbientSound');
         createjs.Sound.play('bonusPerehodSound', {loop: -1});
-        let stage = storage.read('stage');
         let loader = storage.read('loadResult');
         console.warn('I am finishing Bonuses!');
         let finishContainer = new createjs.Container().set({
@@ -566,7 +615,7 @@ export let bonuses = (function () {
                     return;
                 }
                 bonusData = data;
-                drawBonusLevel(currentLevel, data)
+                drawBonusLevel(currentLevel, data);
                 storage.write('bonusResponse', data);
             });
     }

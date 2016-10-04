@@ -2,113 +2,91 @@ export const parameters = {
     font: 'normal 15px Arial',
     color: 'gold',
     1: {
-        x: 95,
-        y: 336,
-        textBaseline: 'middle'
+        x: 15,
+        y: 331
     },
     2: {
-        x: 1072,
-        y: 187,
-        textBaseline: 'middle'
+        x: 992,
+        y: 182
     },
     3: {
-        x: 1072,
-        y: 516,
-        textBaseline: 'middle'
+        x: 992,
+        y: 511
     },
     4: {
-        x: 95,
-        y: 118,
-        textBaseline: 'middle'
+        x: 15,
+        y: 113
     },
     5: {
-        x: 95,
-        y: 585,
-        textBaseline: 'middle'
+        x: 15,
+        y: 580
     },
     6: {
-        x: 95,
-        y: 152,
-        textBaseline: 'middle'
+        x: 15,
+        y: 147
     },
     7: {
-        x: 95,
-        y: 550,
-        textBaseline: 'middle'
+        x: 15,
+        y: 545
     },
     8: {
-        x: 1072,
-        y: 405,
-        textBaseline: 'middle'
+        x: 992,
+        y: 400
     },
     9: {
-        x: 95,
-        y: 301,
-        textBaseline: 'middle'
+        x: 15,
+        y: 296
     },
     10: {
-        x: 95,
-        y: 481,
-        textBaseline: 'middle'
+        x: 15,
+        y: 476
     },
     11: {
-        x: 95,
-        y: 222,
-        textBaseline: 'middle'
+        x: 15,
+        y: 217
     },
     12: {
-        x: 1072,
-        y: 585,
-        textBaseline: 'middle'
+        x: 992,
+        y: 580
     },
     13: {
-        x: 1072,
-        y: 118,
-        textBaseline: 'middle'
+        x: 992,
+        y: 113
     },
     14: {
-        x: 1072,
-        y: 551,
-        textBaseline: 'middle'
+        x: 992,
+        y: 546
     },
     15: {
-        x: 1072,
-        y: 153,
-        textBaseline: 'middle'
+        x: 992,
+        y: 148
     },
     16: {
-        x: 1072,
-        y: 481,
-        textBaseline: 'middle'
+        x: 992,
+        y: 476
     },
     17: {
-        x: 1072,
-        y: 222,
-        textBaseline: 'middle'
+        x: 992,
+        y: 217
     },
     18: {
-        x: 95,
-        y: 187,
-        textBaseline: 'middle'
+        x: 15,
+        y: 182
     },
     19: {
-        x: 95,
-        y: 516,
-        textBaseline: 'middle'
+        x: 15,
+        y: 511
     },
     20: {
-        x: 95,
-        y: 370,
-        textBaseline: 'middle'
+        x: 15,
+        y: 365
     },
     21: {
-        x: 1072,
-        y: 370,
-        textBaseline: 'middle'
+        x: 992,
+        y: 365
     },
     22: {
         x: 1072,
-        y: 336,
-        textBaseline: 'middle'
+        y: 331
     }
 };

@@ -1,8 +1,3 @@
-'use strict';
-// TODO: разобраться с тем как подтягивать библиотечку
-// TODO: разобраться как сделать доступными модули из консоли
-// import create from 'components/webgl/webgl-0.8.2.min.js';
-
 import { events } from 'components/events/events';
 import { storage } from 'components/storage/storage';
 import { utils } from 'components/utils/utils';
@@ -13,6 +8,7 @@ import { preloader } from 'components/preloader/preloader';
 import { bg } from 'components/bg/bg';
 import { balance } from 'components/balance/balance';
 import { buttons } from 'components/buttons/buttons';
+import { controls } from 'components/controls/controls';
 import { menu } from 'components/menu/menu';
 import { autoplay } from 'components/autoplay/autoplay';
 import { roll } from 'components/roll/roll';
@@ -24,9 +20,9 @@ import { freeSpin } from 'components/freeSpin/freeSpin';
 init.start({
     userID: 1,
     casinoID: 1,
-    mode: 'normal'
+    mode: 'normal',
+    device: 'mobile'
 });
-
 init.login();
 
 // Canvas Module
@@ -41,9 +37,7 @@ events.on('menu:changeSide', canvas.changeSide);
 events.on('preloader:goFullscreen', canvas.fullScreen);
 
 // Preloader Module
-preloader.start({
-    fadingTime: 1
-});
+preloader.start();
 events.on('canvas:stage', preloader.startPreloader);
 events.on('preloader:done', () => {
     if (storage.read('savedFS')) {
@@ -55,21 +49,16 @@ events.on('preloader:done', () => {
 });
 
 // BG Module
-bg.start({
-    bottomLineHeight: 30,
-    topLineHeight: 40
-});
-events.on('preloader:loaded', bg.drawBG);
-events.on('menu:changeSide', bg.changeSide);
+bg.start();
+events.on('preloader:loaded', bg.drawMainBG);
+// events.on('menu:changeSide', bg.changeSide);
 
 // Balance Module
-balance.start({
-    textDelta: 20
-});
+balance.start();
 events.on('bg:main', balance.initBalance);
 events.on('menu:changeBet', balance.changeBet);
 events.on('menu:changeCoins', balance.changeCoins);
-events.on('menu:maxBet', balance.maxBet);
+events.on('menu:maxBet', balance.getMaxBet);
 events.on('roll:started', balance.startRoll);
 events.on('roll:ended', balance.endRoll);
 
@@ -102,6 +91,12 @@ events.on('roll:ended', buttons.endRoll);
 events.on('initFreeSpins', buttons.changeVisibility);
 events.on('finishFreeSpins', buttons.changeVisibility);
 events.on('finishFreeSpins', buttons.removeAutoplay);
+
+// Controls Module
+if (storage.read('device') === 'desktop') {
+    controls.start();
+    events.on('bg:main', controls.drawControlsPanel);
+}
 
 // Menu Module
 menu.start({

@@ -56,11 +56,15 @@ export let balance = (function () {
     function drawBalanceBG() {
 
         const footerBgDown = new c.Shape().set({name: 'footerBgDown'});
-        const footerBgUp = new c.Shape().set({name: 'footerBgUp'});
         footerBgDown.graphics.beginFill('#000').drawRect(0, utils.height - config.bottomLineHeight, utils.width, config.bottomLineHeight);
-        footerBgUp.graphics.beginFill('rgba(0, 0, 0, 0.6)').drawRect(0, utils.height - config.bottomLineHeight - config.topLineHeight, utils.width, config.topLineHeight);
 
-        balanceContainer.addChild(footerBgDown, footerBgUp);
+        if (storage.read('device') === 'mobile') {
+            const footerBgUp = new c.Shape().set({name: 'footerBgUp'});
+            footerBgUp.graphics.beginFill('rgba(0, 0, 0, 0.6)').drawRect(0, utils.height - config.bottomLineHeight - config.topLineHeight, utils.width, config.topLineHeight);
+            balanceContainer.addChild(footerBgDown, footerBgUp);
+        } else if (storage.read('device') === 'desktop') {
+            balanceContainer.addChild(footerBgDown);
+        }
 
     }
 
@@ -68,14 +72,32 @@ export let balance = (function () {
 
         const loader = storage.read('loadResult');
         const balanceButtons = new c.Container().set({ name: 'balanceButtons' });
+        let homeButton;
 
-        const home = new c.Bitmap(loader.getResult('home')).set({
-            name: 'homeButton',
-            x: 15, // Magic Numbers
-            y: utils.height - 63 // Magic Numbers
-        });
+        if (storage.read('device') === 'mobile') {
 
-        home.on('click', (event) => {
+            homeButton = new c.Bitmap(loader.getResult('home')).set({
+                name: 'homeButton',
+                x: 15, // Magic Numbers
+                y: utils.height - config.topLineHeight / 2 - config.bottomLineHeight
+            });
+            utils.getCenterPoint(homeButton);
+
+        } else if (storage.read('device') === 'desktop') {
+
+            homeButton = new c.Bitmap(loader.getResult('home')).set({
+                name: 'homeButton',
+                x: 10, // Magic Numbers
+                y: utils.height - config.bottomLineHeight / 2,
+                scaleX: 0.6,
+                scaleY: 0.6,
+                cursor: 'pointer'
+            });
+            utils.getCenterPoint(homeButton);
+
+        }
+
+        homeButton.on('click', (event) => {
             utils.request('_Logout/', storage.read('sessionID'))
                 .then((response) => {
                     console.log('Logout response:', response);
@@ -83,7 +105,7 @@ export let balance = (function () {
                 });
         });
 
-        balanceButtons.addChild(home);
+        balanceButtons.addChild(homeButton);
         balanceContainer.addChild(balanceButtons);
 
     }
@@ -124,6 +146,9 @@ export let balance = (function () {
 
             balanceText.coinsSum = new c.Text(balanceData.coinsSum, parameters.font, parameters.orangeColor).set(parameters.desktop.coinsSum);
             balanceText.betSum = new c.Text(balanceData.betSum, parameters.font, parameters.orangeColor).set(parameters.desktop.betSum);
+            balanceText.coinsValue = new c.Text(balanceData.coinsValue, parameters.font, parameters.orangeColor).set(parameters.desktop.coinsValue);
+            balanceText.betValue = new c.Text(balanceData.betValue, parameters.font, parameters.orangeColor).set(parameters.desktop.betValue);
+            balanceTextContainer.addChild(balanceText.coinsValue, balanceText.betValue);
 
         }
 
@@ -158,21 +183,6 @@ export let balance = (function () {
         setTimeout(updateBalance, 500); // Для того чтобы подгрузились шрифты и отобразить нужным шрифтом.
     }
 
-    // function writeCashBalance(container) {
-    //     const currentBalance = storage.read('currentBalance');
-    //
-    //     let coinsCash = new c.Text(currencySymbol + currentBalance.coinsCash, parameters.font, parameters.color).set(parameters.coinsCash);
-    //     let betCash = new c.Text(currencySymbol + currentBalance.betCash, parameters.font, parameters.color).set(parameters.betCash);
-    //     let winCash = new c.Text(currencySymbol + currentBalance.winCash, parameters.font, parameters.color).set(parameters.winCash);
-    //     let coinsCashText = new c.Text('Cash:', parameters.font, parameters.greyColor).set(parameters.coinsCashText);
-    //     let betCashText = new c.Text('Bet:', parameters.font, parameters.greyColor).set(parameters.betCashText);
-    //     let winCashText = new c.Text('Win:', parameters.font, parameters.greyColor).set(parameters.winCashText);
-    //
-    //     container.addChild(coinsCashText, betCashText, winCashText, coinsCash, betCash, winCash);
-    //
-    //     makeTextDelta(coinsCashText, coinsCash, config.textDelta);
-    // }
-
     function updateBalance() {
 
         if (balanceText.coinsSum.text !== balanceData.coinsSum) {
@@ -194,7 +204,12 @@ export let balance = (function () {
         if (storage.read('device') === 'mobile') {
             makeTextDelta(balanceText.coinsSumText, balanceText.coinsSum, config.textDelta);
         } else if (storage.read('device') === 'desktop') {
-
+            if (balanceText.coinsValue.text !== balanceData.coinsValue) {
+                balanceText.coinsValue.text = balanceData.coinsValue;
+            }
+            if (balanceText.betValue.text !== balanceData.betValue) {
+                balanceText.betValue.text = balanceData.betValue;
+            }
         }
 
         makeTextDelta(balanceText.coinsCashText, balanceText.coinsCash, config.textDelta);

@@ -41,11 +41,15 @@ export let freeSpin = (function () {
 
     function hideBalance() {
         const balanceContainer = stage.getChildByName('balanceContainer');
-        const coinsSum = balanceContainer.getChildByName('coinsSum');
-        const betSum = balanceContainer.getChildByName('betSum');
-        const coinsSumText = balanceContainer.getChildByName('coinsSumText');
-        const betSumText = balanceContainer.getChildByName('betSumText');
-        betSum.visible = coinsSum.visible = betSumText.visible = coinsSumText.visible = false;
+        if (storage.read('device') === 'mobile') {
+            const coinsSum = balanceContainer.getChildByName('coinsSum');
+            const betSum = balanceContainer.getChildByName('betSum');
+            const coinsSumText = balanceContainer.getChildByName('coinsSumText');
+            const betSumText = balanceContainer.getChildByName('betSumText');
+            betSum.visible = coinsSum.visible = betSumText.visible = coinsSumText.visible = false;
+        } else if (storage.read('device') === 'desktop') {
+
+        }
     }
 
     function showFsBalance() {
@@ -107,7 +111,7 @@ export let freeSpin = (function () {
 
     function showPressureTube() {
         const loader = storage.read('loadResult');
-        const fgContainer = stage.getChildByName('fgContainer');
+        const mainContainer = storage.read('mainContainer');
         const pressure = new createjs.Bitmap(loader.getResult('pressure')).set({
             name: 'pressure',
             x: 60,
@@ -152,56 +156,61 @@ export let freeSpin = (function () {
             x: 755,
             y: 40
         });
-        fgContainer.addChildAt(truba, 0);
-        fgContainer.addChild(pressureContainer);
+        mainContainer.addChildAt(truba, 0);
+        mainContainer.addChild(pressureContainer);
     }
 
     function drawFreeSpinsBG() {
         pressureDiscs = [];
         stage = storage.read('stage');
         const loader = storage.read('loadResult');
+        const mainContainer = storage.read('mainContainer');
+        const bgContainer = stage.getChildByName('bgContainer');
+
+        const fsBG = new createjs.Bitmap(loader.getResult('fsBG')).set({
+            name: 'fsBG'
+        });
+        bgContainer.addChildAt(fsBG, 1);
 
         // Balance data invisible
         hideBalance();
         showFsBalance();
 
-        const bgContainer = stage.getChildByName('bgContainer');
-        const gameBG = bgContainer.getChildByName('gameBG');
         const fsTableContainer = new createjs.Container().set({
             name: 'fsTableContainer'
         });
-        const fsMachineBG = new createjs.Bitmap(loader.getResult('fsMachineBG')).set({
-            name: 'fsMachineBG',
-            x: 255,
-            y: 85
-        });
         const fsTotalTable = new createjs.Bitmap(loader.getResult('fsTotalTable')).set({
             name: 'fsTotalTable',
-            x: 985,
+            x: 885,
             y: 30
         });
         const fsTotalCount = new createjs.BitmapText(config.currentCount + '', loader.getResult('fsText')).set({
             name: 'fsTotalCount',
-            x: 1133,
+            x: 1033,
             y: 66,
             scaleX: 0.4,
             scaleY: 0.4
         });
         utils.getCenterPoint(fsTotalCount);
         fsTableContainer.addChild(fsTotalTable, fsTotalCount);
-        stage.addChildAt(fsTableContainer, stage.getChildIndex(stage.getChildByName('fgContainer')) + 1);
-        bgContainer.addChildAt(fsMachineBG, bgContainer.getChildIndex(gameBG) + 1);
+        mainContainer.addChildAt(fsTableContainer, mainContainer.getChildIndex(mainContainer.getChildByName('gameMachine')) + 1);
+
+        const fsMachineBG = new createjs.Bitmap(loader.getResult('fsMachineBG')).set({
+            name: 'fsMachineBG',
+            x: mainContainer.getChildByName('gameBG').x,
+            y: mainContainer.getChildByName('gameBG').y,
+            regX: mainContainer.getChildByName('gameBG').regX,
+            regY: mainContainer.getChildByName('gameBG').regY
+        });
+        mainContainer.addChildAt(fsMachineBG, mainContainer.getChildIndex(mainContainer.getChildByName('gameBG')) + 1);
 
         showPressureTube();
 
-        const fgContainer = stage.getChildByName('fgContainer');
-        const fonar = fgContainer.getChildByName('fonar');
-        fonar.visible = false;
-        fgContainer.uncache();
-        const fsBG = new createjs.Bitmap(loader.getResult('fsBG')).set({
-            name: 'fsBG'
-        });
-        bgContainer.addChildAt(fsBG, 1);
+        // const fgContainer = stage.getChildByName('fgContainer');
+        // const fonar = fgContainer.getChildByName('fonar');
+        // fonar.visible = false;
+        // fgContainer.uncache();
+
         changeMultiplier(2);
         const clockContainer = new c.Container().set({
             name: 'clockContainer'
@@ -225,7 +234,7 @@ export let freeSpin = (function () {
         clockMinutes.paused = true;
         clockContainer.addChild(clock, clockHours, clockMinutes);
         addClockParticles(clockContainer);
-        stage.addChildAt(clockContainer, stage.getChildIndex(stage.getChildByName('winRectsContainer')) + 1);
+        stage.addChildAt(clockContainer, stage.getChildIndex(mainContainer) + 1);
         moveClock(clockContainer);
 
         if (config.currentLevel !== 0) {
@@ -239,8 +248,8 @@ export let freeSpin = (function () {
 
     function addPar(num) {
         const loader = storage.read('loadResult');
-        const fgContainer = stage.getChildByName('fgContainer');
-        const pressureContainer = fgContainer.getChildByName('pressureContainer');
+        const mainContainer = storage.read('mainContainer');
+        const pressureContainer = mainContainer.getChildByName('pressureContainer');
         const parSprite = new createjs.Sprite(loader.getResult('parNaKryshku'), 'go');
         parSprite.set({
             x: pressureDiscs[num].x - 30,
@@ -277,8 +286,8 @@ export let freeSpin = (function () {
     function changeMultiplier(multi) {
         if (pressureDiscs[multi - 2].alpha === 0) return;
         createjs.Sound.play('pressureSound');
-        const fgContainer = stage.getChildByName('fgContainer');
-        const pressureContainer = fgContainer.getChildByName('pressureContainer');
+        const mainContainer = storage.read('mainContainer');
+        const pressureContainer = mainContainer.getChildByName('pressureContainer');
         const pressureFire = pressureContainer.getChildByName('pressureFire');
         const newMask = new createjs.Shape();
         const tl = new TimelineMax();
@@ -348,8 +357,8 @@ export let freeSpin = (function () {
 
     function getMultiLight() {
         const loader = storage.read('loadResult');
-        const fgContainer = stage.getChildByName('fgContainer');
-        const pressureContainer = fgContainer.getChildByName('pressureContainer');
+        const mainContainer = storage.read('mainContainer');
+        const pressureContainer = mainContainer.getChildByName('pressureContainer');
         const light = new c.Bitmap(loader.getResult('redLight'));
         const lightArray = [];
         const lightX = 244;
@@ -373,6 +382,7 @@ export let freeSpin = (function () {
 
     function getFireLogo() {
         const loader = storage.read('loadResult');
+        const mainContainer = storage.read('mainContainer');
         const logoTop = new createjs.Bitmap(loader.getResult('logoTop')).set({
             name: 'logoTop'
         });
@@ -389,13 +399,13 @@ export let freeSpin = (function () {
         let tl = new TimelineMax({repeat: -1, yoyo: true});
         tl.to(logoFire, 0.8, {alpha: 0.7});
         fsLogoContainer.addChild(logoTop, logoFire);
-        const fgContainer = stage.getChildByName('fgContainer');
-        stage.addChildAt(fsLogoContainer, stage.getChildIndex(fgContainer) + 1);
+        const gameMachine = mainContainer.getChildByName('gameMachine');
+        mainContainer.addChildAt(fsLogoContainer, mainContainer.getChildIndex(gameMachine) + 1);
     }
 
     function movePipe() {
-        const fgContainer = stage.getChildByName('fgContainer');
-        const truba = fgContainer.getChildByName('truba');
+        const mainContainer = storage.read('mainContainer');
+        const truba = mainContainer.getChildByName('truba');
         let tl = new TimelineMax({repeat: 5, yoyo: true});
         tl.to(truba, 0.15, {x: 908 - 150});
         if (window.navigator.vibrate) {
@@ -458,7 +468,11 @@ export let freeSpin = (function () {
         buttonsContainer.visible = false;
         fsTotalWin = 0;
         drawFreeSpinsBG();
-        events.trigger('menu:changeSide', 'right');
+        if (storage.read('device') === 'mobile') {
+            events.trigger('menu:changeSide', 'right');
+        } else if (storage.read('device') === 'mobile') {
+
+        }
     }
 
     function transitionFreeSpins(data) {
@@ -543,7 +557,8 @@ export let freeSpin = (function () {
     }
 
     function countFreeSpins(number) {
-        const fsTableContainer = stage.getChildByName('fsTableContainer');
+        const mainContainer = storage.read('mainContainer');
+        const fsTableContainer = mainContainer.getChildByName('fsTableContainer');
         const fsTotalCount = fsTableContainer.getChildByName('fsTotalCount');
         fsTotalCount.text = number + '';
         const countBounds = fsTotalCount.getBounds();
@@ -561,15 +576,15 @@ export let freeSpin = (function () {
         clearTimeout(parTimer);
         storage.changeState('lockedMenu', false);
         const bgContainer = stage.getChildByName('bgContainer');
-        const fgContainer = stage.getChildByName('fgContainer');
+        const mainContainer = storage.read('mainContainer');
         const buttonsContainer = stage.getChildByName('buttonsContainer');
         buttonsContainer.visible = true;
-        const truba = fgContainer.getChildByName('truba');
-        const pressureContainer = fgContainer.getChildByName('pressureContainer');
-        const fsMachineBG = bgContainer.getChildByName('fsMachineBG');
+        const truba = mainContainer.getChildByName('truba');
+        const pressureContainer = mainContainer.getChildByName('pressureContainer');
+        const fsMachineBG = mainContainer.getChildByName('fsMachineBG');
         const fsBG = bgContainer.getChildByName('fsBG');
-        const fonar = fgContainer.getChildByName('fonar');
-        fonar.visible = true;
+        // const fonar = fgContainer.getChildByName('fonar');
+        // fonar.visible = true;
 
         const balanceContainer = stage.getChildByName('balanceContainer');
         const coinsSum = balanceContainer.getChildByName('coinsSum');
@@ -578,16 +593,20 @@ export let freeSpin = (function () {
         const betSumText = balanceContainer.getChildByName('betSumText');
         const totalWinText = balanceContainer.getChildByName('totalWinText');
         const totalWinSum = balanceContainer.getChildByName('totalWinSum');
-        betSum.visible = coinsSum.visible = betSumText.visible = coinsSumText.visible = true;
+        if (storage.read('device') === 'mobile') {
+            betSum.visible = coinsSum.visible = betSumText.visible = coinsSumText.visible = true;
+        } else if (storage.read('device') === 'desktop') {
+
+        }
         balanceContainer.removeChild(totalWinText, totalWinSum);
         balanceContainer.updateCache();
 
-        bgContainer.removeChild(fsMachineBG, fsBG);
+        bgContainer.removeChild(fsBG);
         bgContainer.uncache();
-        fgContainer.removeChild(truba, pressureContainer);
-        fgContainer.uncache();
-        stage.removeChild(stage.getChildByName('fsLogoContainer'));
-        stage.removeChild(stage.getChildByName('fsTableContainer'));
+        mainContainer.removeChild(truba, pressureContainer, fsMachineBG, mainContainer.getChildByName('fsTableContainer'), mainContainer.getChildByName('fsLogoContainer'));
+        // fgContainer.uncache();
+        // stage.removeChild(stage.getChildByName('fsLogoContainer'));
+        // stage.removeChild(stage.getChildByName('fsTableContainer'));
         stage.removeChild(stage.getChildByName('clockContainer'));
         storage.changeState('side', 'left');
         events.trigger('menu:changeSide', 'left');
@@ -671,8 +690,9 @@ export let freeSpin = (function () {
 
     function showTotalFreeSpins(num) {
         const loader = storage.read('loadResult');
+        const mainContainer = storage.read('mainContainer');
         const fsTable = new createjs.Bitmap(loader.getResult('fsTable')).set({
-            x: 730,
+            x: 590,
             y: 180
         });
         let tableBounds = fsTable.getBounds();
@@ -692,11 +712,11 @@ export let freeSpin = (function () {
         tableMask.graphics.beginFill('#fff').drawRect(0, 88, utils.width, utils.height);
         fsTableContainer.mask = tableMask;
         fsTableContainer.addChild(fsTable, fsTableText);
-        stage.addChild(fsTableContainer);
+        mainContainer.addChild(fsTableContainer);
         let tl = new TimelineMax();
         tl.from(fsTableContainer, 0.3, {y: -200, alpha: 0})
             .to(fsTableContainer, 0.3, {y: -200, alpha: 0, onComplete: function () {
-                stage.removeChild(fsTableContainer);
+                mainContainer.removeChild(fsTableContainer);
             }}, '+=1.5');
     }
 

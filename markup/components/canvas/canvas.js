@@ -1,5 +1,3 @@
-// import CreateJS
-// import TweenMax
 import { utils } from 'components/utils/utils';
 import { storage } from 'components/storage/storage';
 import { events } from 'components/events/events';
@@ -57,23 +55,14 @@ export let canvas = (function () {
         });
     }
 
-    // TODO: Эту функцию нужно будет полностью продебажить
     function changeSide(side) {
 
-        console.log('I must change side to:', side);
-
-        // TODO: Нужно будет сделать общий контейнер для автомата и всего с ним
-        const stage = storage.read('stage');
-        const fg = stage.getChildByName('fgContainer');
-        const bg = stage.getChildByName('bgContainer');
-        const gameBG = bg.getChildByName('gameBG');
-        const game = stage.getChildByName('gameContainer');
-        const winLinesContainer = stage.getChildByName('winLinesContainer');
-        const winRectsContainer = stage.getChildByName('winRectsContainer');
-        const gameMask = game.mask;
-        const balance = stage.getChildByName('balanceContainer');
-
         let delta;
+        const stage = storage.read('stage');
+        const mainContainer = storage.read('mainContainer');
+        const balanceContainer = stage.getChildByName('balanceContainer');
+        const balanceText = balanceContainer.getChildByName('balanceTextContainer');
+
         switch (side) {
             case 'right':
                 delta = `+=${config.leftToRight}`;
@@ -87,7 +76,11 @@ export let canvas = (function () {
                 return;
         }
 
-        TweenMax.to([fg, game, gameMask, gameBG, balance, winRectsContainer, winLinesContainer], config.timeToSlide, {x: delta});
+        balanceContainer.uncache();
+        TweenMax.to([mainContainer, balanceText], config.timeToSlide, {x: delta, onComplete: () => {
+            balanceContainer.cache(0, 0, utils.width, utils.height);
+        }});
+
     }
 
     return {

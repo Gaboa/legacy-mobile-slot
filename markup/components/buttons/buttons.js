@@ -38,6 +38,11 @@ export let buttons = (function () {
     }
 
     function drawButtons() {
+
+        // if (storage.read('device') === 'desktop') {
+        //     return;
+        // }
+
         const stage = storage.read('stage');
         const loader = storage.read('loadResult');
         const ss = loader.getResult('buttons');

@@ -1,99 +1,104 @@
-// import CreateJS
-// import TimelineMax
 import { utils } from 'components/utils/utils';
 import { storage } from 'components/storage/storage';
 import { events } from 'components/events/events';
+import { effects } from 'components/effects/effects';
+
+export let config;
 
 export let bg = (function () {
 
-    let config;
-    const defaultConfig = {
-        bottomLineHeight: 30,
-        topLineHeight: 40
-    };
+    let bgContainer;
+    let mainContainer;
 
     const c = createjs;
-    const w = utils.width;
-    const h = utils.height;
+    const defaultConfig = {
+        gameDeltaWidth: 20,
+        gameDeltaHeight: 80,
+        desktopScale: 0.8
+    };
 
     function start(configObj) {
         config = configObj || defaultConfig;
     }
 
-    function drawBG() {
+    function drawMainBG() {
+
         const stage = storage.read('stage');
         const loader = storage.read('loadResult');
 
-        const bgContainer = new c.Container().set({name: 'bgContainer'});
-        const fgContainer = new c.Container().set({name: 'fgContainer'});
-        const mainBG = new c.Bitmap(loader.getResult('newBGLight')).set({name: 'mainBG'});
-        const gameBG = new c.Sprite(loader.getResult('bg'), 'gameBG').set({name: 'gameBG'});
-        const gameMachine = new c.Bitmap(loader.getResult('newGameMachine')).set({
-            name: 'gameMachine',
-            x: 80, // Magic Numbers
-            y: 5 // Magic Numbers
-        });
+        // bgContainer
+        bgContainer = new c.Container().set({name: 'bgContainer'});
+        storage.write('bgContainer', bgContainer);
 
-        const fonar = new c.Bitmap(loader.getResult('fonar')).set({
-            name: 'fonar',
-            x: 71, // Magic Numbers
-            y: 23, // Magic Numbers
-            regX: 267 // Magic Numbers
-        });
-        const fonarTL = new TimelineMax({repeat: -1, yoyo: true});
-        fonarTL.to(fonar, 2, {
-            ease: RoughEase.ease.config({ template: Power0.easeNone, strength: 0.1, points: 10, taper: 'none', randomize: true, clamp: false}), alpha: 0.7
-        });
+        const mainBG = new c.Bitmap(loader.getResult('mainBG')).set({name: 'mainBG'});
 
-        // Это нужно перенести в модуль баланса или оставить здесь
-        const footerBgDown = new c.Shape().set({name: 'footerBgDown'});
-        const footerBgUp = new c.Shape().set({name: 'footerBgUp'});
-        footerBgDown.graphics.beginFill('rgba(0, 0, 0)').drawRect(0, h - config.bottomLineHeight, w, config.bottomLineHeight);
-        footerBgUp.graphics.beginFill('rgba(0, 0, 0, 0.6)').drawRect(0, h - config.bottomLineHeight - config.topLineHeight, w, config.topLineHeight);
+        // Если в бекграунде несколько элементов, то лучше кешировать контейнер
+        bgContainer.addChild(mainBG);
 
-        // Это нужно перенести в модуль кнопок либо отдельный модуль
-        const home = new c.Bitmap(loader.getResult('home')).set({
-            name: 'homeButton',
-            x: 15, // Magic Numbers
-            y: h - 63 // Magic Numbers
-        });
-        home.on('click', function () {
-            utils.request('_Logout/', storage.read('sessionID'))
-            .then((response) => {
-                console.log('Logout response:', response);
+        // mainContainer
+        if (storage.read('device') === 'mobile') {
+
+            mainContainer = new c.Container().set({
+                name: 'mainContainer',
+                x: 75, // Magic Numbers
+                y: 5 // Magic Numbers
             });
-            window.history.back();
+            storage.write('mainContainer', mainContainer);
+
+        } else if (storage.read('device') === 'desktop') {
+
+            mainContainer = new c.Container().set({
+                name: 'mainContainer',
+                x: 200, // Magic Numbers
+                y: 10, // Magic Numbers
+                scaleX: config.desktopScale,
+                scaleY: config.desktopScale
+            });
+            storage.write('mainContainer', mainContainer);
+
+        }
+
+        const gameMachine = new c.Bitmap(loader.getResult('gameMachine')).set({
+            name: 'gameMachine'
         });
 
+        const gameBG = new c.Bitmap(loader.getResult('gameBG')).set({
+            name: 'gameBG',
+            x: config.gameDeltaWidth,
+            y: config.gameDeltaHeight
+        });
 
-        bgContainer.addChild(mainBG, gameBG, footerBgUp, footerBgDown, home);
-        fgContainer.addChild(gameMachine, fonar);
-        stage.addChildAt(bgContainer, fgContainer, 0);
+        mainContainer.addChild(gameBG, gameMachine);
+        stage.addChildAt(bgContainer, mainContainer, 0);
 
-        // TODO: Разобраться с кешированием бекграундов
-        // TODO: Перенасти отрисовку нижних полосок меню в модуль balance
+        if (storage.read('device') === 'mobile') {
 
-        storage.changeState('bgDraw', 'main');
+            events.trigger('bg:changeSide', 'left');
+            storage.changeState('side', 'left');
+
+        } else if (storage.read('device') === 'desktop') {
+
+            events.trigger('bg:changeSide', 'right');
+            storage.changeState('side', 'right');
+
+        }
+
+        effects.drawFonar();
+
         events.trigger('bg:main');
-        storage.changeState('side', 'left');
-        events.trigger('bg:changeSide', 'left');
+
     }
 
-    function changeSide(side) {
-        const stage = storage.read('stage');
-        const fg = stage.getChildByName('fgContainer');
-        const fonar = fg.getChildByName('fonar');
-        if (side === 'left') {
-            fonar.x = 71; // Magic Numbers
-        } else if (side === 'right') {
-            fonar.x = 71 - 150; // Magic Numbers
-        }
+    function drawFreeSpinsBG() {
+
+
+
     }
 
     return {
         start,
-        drawBG,
-        changeSide
+        drawMainBG,
+        drawFreeSpinsBG
     };
 
 })();

@@ -1,8 +1,13 @@
 import { utils } from 'components/utils/utils';
 import { storage } from 'components/storage/storage';
 import { events } from 'components/events/events';
+import { config as bgConfig } from 'components/bg/bg';
 
 export let roll = (function () {
+
+    function getBgConfig() {
+        return bgConfig;
+    }
 
     // Consts
     const c = createjs;
@@ -50,17 +55,20 @@ export let roll = (function () {
     }
 
     function initGameContainer() {
+
         gameContainer.set({
             name: 'gameContainer',
-            x: config.gameX,
-            y: config.gameY
+            x: bgConfig.gameDeltaWidth,
+            y: bgConfig.gameDeltaHeight
         });
-        const stage = storage.read('stage');
+
         const gameMask = new createjs.Shape();
-        gameMask.graphics.drawRect(config.gameX, config.gameY, utils.gameWidth, utils.gameHeight);
+        gameMask.graphics.drawRect(bgConfig.gameDeltaWidth, bgConfig.gameDeltaHeight, utils.gameWidth, utils.gameHeight);
         gameContainer.mask = gameMask;
-        const fg = stage.getChildByName('fgContainer');
-        stage.addChildAt(gameContainer, stage.getChildIndex(fg));
+
+        const mainContainer = storage.read('mainContainer');
+        const gameMachine = mainContainer.getChildByName('gameMachine');
+        mainContainer.addChildAt(gameContainer, mainContainer.getChildIndex(gameMachine));
     }
 
     function getScreenData(inds, wls) {

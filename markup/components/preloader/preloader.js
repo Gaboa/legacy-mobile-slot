@@ -1,18 +1,17 @@
 import { utils } from 'components/utils/utils';
 import { storage } from 'components/storage/storage';
 import { events } from 'components/events/events';
-import { preloaderManifest, mainManifest } from 'components/preloader/manifests';
+import {preloaderManifest,
+        mainManifest,
+        preloaderManifestFullHD} from 'components/preloader/manifests';
+
+export let config;
 
 export let preloader = (function () {
 
-    let config;
-    const defaultConfig = {
-        fadingTime: 1
-    };
-
     const c = createjs;
-    const w = utils.width;
-    const h = utils.height;
+    const defaultConfig = {};
+
     let stage;
 
     function start(configObj) {
@@ -20,80 +19,96 @@ export let preloader = (function () {
     }
 
     function startPreloader() {
+
         const loader = new c.LoadQueue(true);
         loader.setMaxConnections(4);
-        loader.loadManifest(preloaderManifest);
         loader.on('complete', showPreloader);
+        loader.loadManifest(preloaderManifest);
+
     }
 
     function showPreloader(event) {
+
         stage = storage.read('stage');
         const loader = event.target;
 
         //  New Preloader
         const newPreloaderContainer = new c.Container().set({ name: 'newPreloaderContainer' });
+
+        const darkBG = new c.Shape();
+        darkBG.graphics.beginFill('#000').drawRect(0, 0, utils.width, utils.height);
+
+        //  Preloader Line
         const lineSS = loader.getResult('preloaderLine');
-        const coinSS = loader.getResult('preloaderCoin');
         const line = new c.Sprite(lineSS).set({
             name: 'preloaderLine',
             y: 450
         });
-        const coin = new c.Sprite(coinSS, 'coin').set({
-            name: 'preloaderCoin',
-            y: 200,
-            scaleX: 0.5,
-            scaleY: 0.5,
-            framerate: 15
-        });
         utils.getCenterPoint(line);
         utils.setInCenterOf(line, utils.width);
         line.paused = true;
+
+        // Preloader Coin
+        const coinSS = loader.getResult('preloaderCoin');
+        const coin = new c.Sprite(coinSS, 'coin').set({
+            name: 'preloaderCoin',
+            y: 200,
+            framerate: 20
+        });
         utils.getCenterPoint(coin);
         utils.setInCenterOf(coin, utils.width);
         coin.play();
-        const darkBG = new c.Shape();
-        darkBG.graphics.beginFill('#000').drawRect(0, 0, utils.width, utils.height);
+
         newPreloaderContainer.addChild(darkBG, line, coin);
 
         stage.addChild(newPreloaderContainer);
 
         mainPreload(newPreloaderContainer);
+
     }
 
     function drawInitScreen() {
+
         const loader = storage.read('loadResult');
+
+        // Spritesheets
         const ss = loader.getResult('preloader');
         const clock = loader.getResult('preloaderSprite');
 
+        //  Containers
         const preloaderContainer = new c.Container().set({ name: 'preloaderContainer' });
         const preloaderCache = new c.Container().set({ name: 'preloaderCache' });
+
         const preloaderBG = new c.Sprite(ss, 'bg').set({ name: 'preloaderBG' });
 
         const preloaderLogo = new c.Sprite(ss, 'logo');
         preloaderLogo.set({
             name: 'preloaderLogo',
-            x: (w - preloaderLogo.getBounds().width) / 2,
+            x: (utils.width - preloaderLogo.getBounds().width) / 2,
             y: 75
         });
 
         const preloaderPlay = new c.Sprite(ss, 'play');
         preloaderPlay.set({
             name: 'preloaderPlay',
-            x: (w - preloaderPlay.getBounds().width) / 2,
+            x: (utils.width - preloaderPlay.getBounds().width) / 2,
             y: 310
         });
 
         const preloaderSprite = new c.Sprite(clock, 'start');
         preloaderSprite.set({
             name: 'preloaderSprite',
-            x: (w - preloaderSprite.getBounds().width) / 2 - 100,
+            x: (utils.width - preloaderSprite.getBounds().width) / 2 - 100,
             y: 150
         });
         preloaderSprite.paused = true;
 
         preloaderCache.addChild(preloaderBG, preloaderLogo);
-        preloaderCache.cache(0, 0, w, h);
+        preloaderCache.cache(0, 0, utils.width, utils.height);
         preloaderContainer.addChild(preloaderCache, preloaderPlay, preloaderSprite);
+        preloaderContainer.on('click', function (e) {
+            e.stopPropagation();
+        });
         stage.addChildAt(preloaderContainer, stage.getChildIndex(stage.getChildByName('newPreloaderContainer')));
     }
 
@@ -164,9 +179,9 @@ export let preloader = (function () {
 
         const loader = storage.read('loadResult');
         const container = storage.read('stage').getChildByName('preloaderContainer');
-        container.cache(0, 0, w, h);
+        container.cache(0, 0, utils.width, utils.height);
 
-        TweenMax.to(container, config.fadingTime, {alpha: 0, onComplete: function () {
+        TweenMax.to(container, 1, {alpha: 0, onComplete: function () {
             stage.removeChild(container);
             storage.changeState('preloader', 'done');
             events.trigger('preloader:done');
