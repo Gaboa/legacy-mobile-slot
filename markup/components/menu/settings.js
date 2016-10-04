@@ -204,5 +204,6 @@ function handleInfoClick() {
 }
 
 function handleHistoryClick() {
+    $('#history').toggleClass('closed');
     utils.showPopup('Coming soon!');
 }
