@@ -30,20 +30,37 @@ export let bg = (function () {
         const gameBG = new c.Sprite(loader.getResult('bg'), 'gameBG').set({name: 'gameBG'});
         const gameMachine = new c.Bitmap(loader.getResult('newGameMachine')).set({
             name: 'gameMachine',
-            x: 80, // Magic Numbers
+            x: 30, // Magic Numbers
             y: 5 // Magic Numbers
         });
+        const logoNecro = new c.Bitmap(loader.getResult('logoNecro')).set({
+            name: 'logoNecro',
+            x: 325, // Magic Numbers
+            y: 15 // Magic Numbers
+        });
 
-        const fonar = new c.Bitmap(loader.getResult('fonar')).set({
-            name: 'fonar',
-            x: 71, // Magic Numbers
-            y: 23, // Magic Numbers
-            regX: 267 // Magic Numbers
+        const winNumbersContainer = new c.Container().set({name: 'winNumbersContainer'});
+
+        let winNumPrefab = new c.Sprite(loader.getResult('winAllNumbers')).set({
+            name: 'winAllNumbers',
+            x: 24, // Magic Numbers
+            y: 106, // Magic Numbers
+            visible: false
         });
-        const fonarTL = new TimelineMax({repeat: -1, yoyo: true});
-        fonarTL.to(fonar, 2, {
-            ease: RoughEase.ease.config({ template: Power0.easeNone, strength: 0.1, points: 10, taper: 'none', randomize: true, clamp: false}), alpha: 0.7
-        });
+
+        const winNumCount = winNumPrefab.spriteSheet.getNumFrames();
+        let winNumArr = [];
+        for (let i = 0; i < winNumCount; i++) {
+            winNumPrefab.gotoAndStop(i);
+            winNumArr[i] = [
+                winNumPrefab.clone(),
+                winNumPrefab.clone().set({
+                    x: 1045, // Magic Numbers
+                    y: 106 // Magic Numbers
+                })
+            ];
+            winNumbersContainer.addChild(winNumArr[i][0], winNumArr[i][1]);
+        }
 
         // Это нужно перенести в модуль баланса или оставить здесь
         const footerBgDown = new c.Shape().set({name: 'footerBgDown'});
@@ -67,12 +84,13 @@ export let bg = (function () {
 
 
         bgContainer.addChild(mainBG, gameBG, footerBgUp, footerBgDown, home);
-        fgContainer.addChild(gameMachine, fonar);
+        fgContainer.addChild(gameMachine, winNumbersContainer, logoNecro);
         stage.addChildAt(bgContainer, fgContainer, 0);
 
         // TODO: Разобраться с кешированием бекграундов
         // TODO: Перенасти отрисовку нижних полосок меню в модуль balance
 
+        storage.write('winNumbersArr', winNumArr);
         storage.changeState('bgDraw', 'main');
         events.trigger('bg:main');
         storage.changeState('side', 'left');
@@ -82,12 +100,6 @@ export let bg = (function () {
     function changeSide(side) {
         const stage = storage.read('stage');
         const fg = stage.getChildByName('fgContainer');
-        const fonar = fg.getChildByName('fonar');
-        if (side === 'left') {
-            fonar.x = 71; // Magic Numbers
-        } else if (side === 'right') {
-            fonar.x = 71 - 150; // Magic Numbers
-        }
     }
 
     return {

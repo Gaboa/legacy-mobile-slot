@@ -1,3 +1,6 @@
+// import CreateJS
+// import TweenMax
+// import TimelineMax
 import { utils } from 'components/utils/utils';
 import { storage } from 'components/storage/storage';
 import { events } from 'components/events/events';
@@ -29,58 +32,35 @@ export let preloader = (function () {
     function showPreloader(event) {
         stage = storage.read('stage');
         const loader = event.target;
-
-        //  New Preloader
-        const newPreloaderContainer = new c.Container().set({ name: 'newPreloaderContainer' });
-        const lineSS = loader.getResult('preloaderLine');
-        const coinSS = loader.getResult('preloaderCoin');
-        const line = new c.Sprite(lineSS).set({
-            name: 'preloaderLine',
-            y: 450
-        });
-        const coin = new c.Sprite(coinSS, 'coin').set({
-            name: 'preloaderCoin',
-            y: 200,
-            scaleX: 0.5,
-            scaleY: 0.5,
-            framerate: 15
-        });
-        utils.getCenterPoint(line);
-        utils.setInCenterOf(line, utils.width);
-        line.paused = true;
-        utils.getCenterPoint(coin);
-        utils.setInCenterOf(coin, utils.width);
-        coin.play();
-        const darkBG = new c.Shape();
-        darkBG.graphics.beginFill('#000').drawRect(0, 0, utils.width, utils.height);
-        newPreloaderContainer.addChild(darkBG, line, coin);
-
-        stage.addChild(newPreloaderContainer);
-
-        mainPreload(newPreloaderContainer);
-    }
-
-    function drawInitScreen() {
-        const loader = storage.read('loadResult');
         const ss = loader.getResult('preloader');
         const clock = loader.getResult('preloaderSprite');
 
         const preloaderContainer = new c.Container().set({ name: 'preloaderContainer' });
         const preloaderCache = new c.Container().set({ name: 'preloaderCache' });
-        const preloaderBG = new c.Sprite(ss, 'bg').set({ name: 'preloaderBG' });
-
-        const preloaderLogo = new c.Sprite(ss, 'logo');
-        preloaderLogo.set({
-            name: 'preloaderLogo',
-            x: (w - preloaderLogo.getBounds().width) / 2,
-            y: 75
+        const preloaderBG = new createjs.Bitmap(loader.getResult('fsBG')).set({
+            name: 'fsBG'
         });
 
-        const preloaderPlay = new c.Sprite(ss, 'play');
+        const preloaderLogo = new createjs.Bitmap(loader.getResult('preloaderLogo'));
+        preloaderLogo.set({
+            name: 'preloaderLogo',
+            x: w / 2 + 70,
+            y: h / 2,
+            regX: preloaderLogo.getBounds().width / 2,
+            regY: preloaderLogo.getBounds().height / 2,
+            scaleX: 1,
+            scaleY: 1
+        });
+
+        const preloaderPlay = new createjs.Bitmap(loader.getResult('play'));
         preloaderPlay.set({
             name: 'preloaderPlay',
-            x: (w - preloaderPlay.getBounds().width) / 2,
-            y: 310
+            x: w / 2,
+            y: h / 2 + 150,
+            regX: preloaderPlay.getBounds().width / 2,
+            regY: preloaderPlay.getBounds().height / 2,
+            scaleX: 1,
+            scaleY: 1
         });
 
         const preloaderSprite = new c.Sprite(clock, 'start');
@@ -94,11 +74,16 @@ export let preloader = (function () {
         preloaderCache.addChild(preloaderBG, preloaderLogo);
         preloaderCache.cache(0, 0, w, h);
         preloaderContainer.addChild(preloaderCache, preloaderPlay, preloaderSprite);
-        stage.addChildAt(preloaderContainer, stage.getChildIndex(stage.getChildByName('newPreloaderContainer')));
+        preloaderContainer.on('click', function (e) {
+            e.stopPropagation();
+        });
+        stage.addChild(preloaderContainer);
+
+        mainPreload(preloaderContainer);
     }
 
     function mainPreload(container) {
-        const sprite = container.getChildByName('preloaderLine');
+        const sprite = container.getChildByName('preloaderSprite');
         const loader = new c.LoadQueue(true);
         loader.installPlugin(c.Sound);
         loader.setMaxConnections(20);
@@ -125,31 +110,27 @@ export let preloader = (function () {
     }
 
     function handleLoadComplete(event, data) {
+        const container = data.container;
+        const sprite = container.getChildByName('preloaderSprite');
+        const play = container.getChildByName('preloaderPlay');
+
+        // sprite.gotoAndPlay('finish');
+        sprite.visible = false;
+
+        let tl = new TimelineMax({repeat: -1});
+        tl.to(play, 0.1, {rotation: -20, ease: Power0.easeNone, delay: 2})
+            .to(play, 0.1, {rotation: 20, ease: Power0.easeNone})
+            .to(play, 0.1, {rotation: -20, ease: Power0.easeNone})
+            .to(play, 0.1, {rotation: 20, ease: Power0.easeNone})
+            .to(play, 0.1, {rotation: 0, ease: Power0.easeNone});
+
+        play.on('click', handlePlayClick, play, true, {
+            container
+        });
 
         storage.write('loadResult', event.target);
-
-        drawInitScreen();
-
-        setTimeout(clearPreloader, 100);
-
-    }
-
-    function clearPreloader() {
-
-        let preloaderContainer = stage.getChildByName('preloaderContainer');
-        let preloaderSprite = preloaderContainer.getChildByName('preloaderSprite');
-        let play = preloaderContainer.getChildByName('preloaderPlay');
-        play.on('click', handlePlayClick, play, true);
-
-        let newPreloaderContainer = stage.getChildByName('newPreloaderContainer');
-        newPreloaderContainer.cache(0, 0, utils.width, utils.height);
-        TweenMax.to(newPreloaderContainer, 0.5, {alpha: 0, onComplete: function () {
-            preloaderSprite.play();
-            storage.changeState('loaded', true);
-            events.trigger('preloader:loaded');
-            stage.removeChild(newPreloaderContainer);
-        }});
-
+        storage.changeState('loaded', true);
+        events.trigger('preloader:loaded');
     }
 
     function handlePlayClick(event, data) {
@@ -162,11 +143,11 @@ export let preloader = (function () {
         storage.changeState('music', true);
         // Конец фрагмента
 
-        const loader = storage.read('loadResult');
-        const container = storage.read('stage').getChildByName('preloaderContainer');
+        const container = data.container;
         container.cache(0, 0, w, h);
 
-        TweenMax.to(container, config.fadingTime, {alpha: 0, onComplete: function () {
+        const tl = new TimelineMax();
+        tl.to(container, config.fadingTime, {alpha: 0, onComplete: function () {
             stage.removeChild(container);
             storage.changeState('preloader', 'done');
             events.trigger('preloader:done');

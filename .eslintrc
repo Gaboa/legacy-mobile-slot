@@ -17,7 +17,9 @@
         "TimelineMax": true,
         "Back": true,
         "Bounce": true,
-        "Power1": true
+        "Power1": true,
+        "Power0": true,
+        "RoughEase": true
     },
 
     "extends": "eslint:recommended",

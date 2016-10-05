@@ -17,12 +17,13 @@ export let win = (function () {
     let winLinesContainer;
     let winRectsContainer;
     let winElements;
+    let currWinLines = [];
+    let currWinScatters = [];
     let lightLinesCounter = 0;
     let lightDoneCounter = 0;
-
     let config;
     const defaultConfig = {
-
+        topScreen: true
     };
 
     function start(configObj) {
@@ -133,26 +134,30 @@ export let win = (function () {
         const lineWin = data.lineWin;
         const winText = new c.Container().set({
             name: 'winText',
-            y: linesCoords[number - 1][amount - 1].y + 30, // Magic Numbers
-            x: linesCoords[number - 1][amount - 1].x + 32 // Magic Numbers
+            y: linesCoords[number - 1][amount - 1].y + 50, // Magic Numbers
+            x: linesCoords[number - 1][amount - 1].x + 52 // Magic Numbers
         });
         const winLineRect = new c.Bitmap(loader.getResult('winLineRect')).set({
             name: 'winLineRect',
-            scaleX: 1.8,
-            scaleY: 1.8
+            // y: 3,
+            regX: 24,
+            regY: 24,
+            scaleX: 1.2,
+            scaleY: 1.2
         });
         const winLineText = new c.Text(lineWin, '35px Helvetica', '#f0e194').set({
             name: 'winLineText',
-            x: 30, // Magic Numbers
-            y: 22, // Magic Numbers
+            y: -1,
             textAlign: 'center',
             textBaseline: 'middle',
             shadow: new c.Shadow('#C19433', 0, 0, 8)
         });
+        let bounds = winLineText.getBounds();
+
         if ((winLineText.text + '').length > 3) {
-            winLineText.font = '20px Helvetica';
+            winLineText.font = '19px Helvetica';
         } else if ((winLineText.text + '').length > 2) {
-            winLineText.font = '25px Helvetica';
+            winLineText.font = '24px Helvetica';
         } else if ((winLineText.text + '').length > 1) {
             winLineText.font = '30px Helvetica';
         }
@@ -182,26 +187,55 @@ export let win = (function () {
     }
 
     function drawLineFire(number) {
-        const loader = storage.read('loadResult');
-        const ss = loader.getResult('lineFire');
-        const lineFire = new c.Sprite(ss, 'go').set({
-            name: 'lineFire',
-            x: parameters[number].x - winRectsContainer.x - 3, // Magic Numbers
-            y: parameters[number].y - winRectsContainer.y + 5 // Magic Numbers
-        });
-        if (storage.readState('side') === 'right') {
-            lineFire.x += 150; // Magic Numbers
-        }
-        winRectsContainer.addChild(lineFire);
+        // const loader = storage.read('loadResult');
+        // const ss = loader.getResult('lineFire');
+        // const lineFire = new c.Sprite(ss, 'go').set({
+        //     name: 'lineFire',
+        //     x: parameters[number].x - winRectsContainer.x - 3, // Magic Numbers
+        //     y: parameters[number].y - winRectsContainer.y + 5 // Magic Numbers
+        // });
+        // if (storage.readState('side') === 'right') {
+        //     lineFire.x += 150; // Magic Numbers
+        // }
+        // winRectsContainer.addChild(lineFire);
     }
 
     function fireWinLine(number, amount) {
-        for (let i = 0; i < amount; i++) {
-            const element = winElements[number - 1][i];
-            const animationName = element.currentAnimation;
-            const elementIndex = animationName.substr(animationName.indexOf('-') - 1, 1);
-            element.gotoAndPlay(`${elementIndex}-w`);
+        const gameTopElements = storage.read('gameTopElements');
+        const winLine = storage.read('lines')[number - 1];
+
+        let winNumbersArr = storage.read('winNumbersArr');
+        if (number - 1 < winNumbersArr.length) {
+            winNumbersArr[number - 1][0].visible = true;
+            winNumbersArr[number - 1][1].visible = true;
         }
+
+        if (defaultConfig.topScreen) {
+            currWinLines.push({
+                number: number,
+                amount: amount,
+                winLine: winLine
+            });
+
+            for (let i = 0; i < amount; i++) {
+                const element = winElements[number - 1][i];
+                const animationName = element.currentAnimation;
+                const elementIndex = animationName.substr(animationName.indexOf('-') - 1, 1);
+                let topElement = gameTopElements[+winLine[i][0]][+winLine[i][1]];
+                element.visible = false;
+                topElement.visible = true;
+
+                topElement.gotoAndPlay(`${elementIndex}-w`);
+            }
+        } else {
+            for (let i = 0; i < amount; i++) {
+                const element = winElements[number - 1][i];
+                const animationName = element.currentAnimation;
+                const elementIndex = animationName.substr(animationName.indexOf('-') - 1, 1);
+                element.gotoAndPlay(`${elementIndex}-w`);
+            }
+        }
+
         drawLineLight(number);
         drawLineFire(number);
     }
@@ -225,14 +259,27 @@ export let win = (function () {
     }
 
     function fireAllScatters() {
-        const gameContainer = stage.getChildByName('gameContainer');
+        // const gameContainer = stage.getChildByName('gameContainer');
+        const gameTopElements = storage.read('gameTopElements');
         winElements.forEach((winLine) => {
-            winLine.forEach((element) => {
+            winLine.forEach((element, colInd) => {
                 const animationName = element.currentAnimation;
                 const elementIndex = animationName.substr(animationName.indexOf('-') - 2, 2);
                 if (+elementIndex === 10) {
                     if (animationName === '10-n') {
-                        element.gotoAndPlay(`${elementIndex}-w`);
+                        if (defaultConfig.topScreen) {
+                            let topElement = gameTopElements[colInd][+element.posY];
+                            element.visible = false;
+                            topElement.visible = true;
+                            topElement.gotoAndPlay(`${elementIndex}-w`);
+                        } else {
+                            element.gotoAndPlay(`${elementIndex}-w`);
+                        }
+
+                        currWinScatters.push({
+                            el: element,
+                            colInd: colInd
+                        });
                     }
                 }
                 if (+elementIndex === 14) {
@@ -242,9 +289,9 @@ export let win = (function () {
                 }
             });
         });
-        if (storage.read('rollResponse').BonusResults[0] === 'StagesSlotBonus') {
+        if (storage.read('rollResponse').BonusResults[0] === 'FreeSpinBonus') {
             setTimeout(function () {
-                events.trigger('initBonusLevel');
+                events.trigger('initFreeSpins');
             }, 1000);
         }
     }
@@ -349,13 +396,14 @@ export let win = (function () {
             if (+lineNumber !== -1) {
                 fireWinLine(lineNumber, lineAmount);
                 lightLinesCounter++;
-            } else if (+lineWin !== 0 && storage.readState('mode') !== 'fsBonus') {
+            } else { // if (+lineWin !== 0 && storage.readState('mode') !== 'fsBonus') {
                 fireAllScatters();
-            } else if (+lineWin === 0 && storage.readState('mode') === 'fsBonus') {
-                fireAllScatters();
-            } else {
-                fireScatterWild();
             }
+            // else if (+lineWin === 0 && storage.readState('mode') === 'fsBonus') {
+            //     fireAllScatters();
+            // } else {
+            //     fireScatterWild();
+            // }
         });
         const totalWin = storage.read('rollResponse').TotalWinCoins;
         if (totalWin > 0) {
@@ -390,25 +438,72 @@ export let win = (function () {
         }
     }
 
+    function _clearWinElement(el) {
+        const animationName = el.currentAnimation;
+
+        let elementIndex;
+        if (animationName.length === 4) {
+            elementIndex = animationName.substr(animationName.indexOf('-') - 2, 2);
+        } else {
+            elementIndex = animationName.substr(animationName.indexOf('-') - 1, 1);
+        }
+        el.gotoAndStop(`${elementIndex}-n`);
+        el.set({
+            scaleX: 1,
+            scaleY: 1
+        });
+    }
+
     function cleanWin() {
-        winLinesContainer.removeAllChildren();
-        winRectsContainer.removeAllChildren();
-        winElements.forEach((line) => {
-            line.forEach((element) => {
-                const animationName = element.currentAnimation;
-                let elementIndex;
-                if (animationName.length === 4) {
-                    elementIndex = animationName.substr(animationName.indexOf('-') - 2, 2);
-                } else {
-                    elementIndex = animationName.substr(animationName.indexOf('-') - 1, 1);
-                }
-                element.gotoAndStop(`${elementIndex}-n`);
-                element.set({
-                    scaleX: 1,
-                    scaleY: 1
+        if (defaultConfig.topScreen) {
+            const gameTopElements = storage.read('gameTopElements');
+            if (currWinLines.length) {
+                let winNumbersArr = storage.read('winNumbersArr');
+                currWinLines.forEach((lineData) => {
+                    let amount = lineData.amount;
+                    let number = lineData.number;
+                    let winLine = lineData.winLine;
+                    for (let i = 0; i < amount; i++) {
+                        const element = winElements[number - 1][i];
+                        const topElement = gameTopElements[+winLine[i][0]][+winLine[i][1]];
+                        element.visible = true;
+                        topElement.visible = false;
+                        _clearWinElement(topElement);
+                    }
+
+                    if (number - 1 < winNumbersArr.length) {
+                        winNumbersArr[number - 1][0].visible = false;
+                        winNumbersArr[number - 1][1].visible = false;
+                    }
+                });
+
+                currWinLines = [];
+            }
+
+            if (currWinScatters.length) {
+                currWinScatters.forEach((scatter) => {
+                    let element = scatter.el;
+                    if (defaultConfig.topScreen) {
+                        let topElement = gameTopElements[scatter.colInd][+element.posY];
+                        element.visible = true;
+                        topElement.visible = false;
+                        _clearWinElement(topElement);
+                    } else {
+                        _clearWinElement(element);
+                    }
+                });
+                currWinScatters = [];
+            }
+        } else {
+            winElements.forEach((line) => {
+                line.forEach((element) => {
+                    _clearWinElement(element);
                 });
             });
-        });
+        }
+
+        winLinesContainer.removeAllChildren();
+        winRectsContainer.removeAllChildren();
         lightLinesCounter = 0;
         lightDoneCounter = 0;
     }

@@ -7,7 +7,7 @@
     },
     "framerate": 12,
     "animations": {
-        "start": [0, 12, "finish"],
+        "start": [0, 12],
         "finish": [13, 22, "loop"],
         "loop": [23, 26]
     }

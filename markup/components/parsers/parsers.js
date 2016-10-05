@@ -2,7 +2,7 @@ import { utils } from 'components/utils/utils';
 
 export let parsers = (function () {
 
-    const names = ['j', 'iJ', 'q', 'iQ', 'k', 'iK', 'a', 'iA', 'wild', 'scatter', 'sw1', 'sw2', 'sw3', 'card'];
+    const names = ['j', 'iJ', 'q', 'iQ', 'k', 'iK', 'a', 'iA', 'wild', 'scatter', 'sw1', 'sw2', 'sw3', 'sw4', 'sw5', 'sw6', 'sw7', 'sw8', 'sw9'];
 
     function parseWheels(string) {
         const wheelsMas = string.split('|').map((column) => {

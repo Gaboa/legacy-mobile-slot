@@ -1,19 +1,20 @@
 export const preloaderManifest = [
-    {id: 'preloaderCoin', src: 'static/img/content/preloader/new/coin.json', type: 'spritesheet'},
-    {id: 'preloaderLine', src: 'static/img/content/preloader/new/line.json', type: 'spritesheet'}
+    {id: 'preloader', src: 'static/img/content/preloader/preloader.json', type: 'spritesheet'},
+    {id: 'preloaderSprite', src: 'static/img/content/preloader/sprite.json', type: 'spritesheet'},
+    {id: 'fsBG', src: 'static/img/content/bg/fsBG.png'},
+    {id: 'preloaderLogo', src: 'static/img/content/preloader/preloaderLogo.png'},
+    {id: 'play', src: 'static/img/content/preloader/play.png'}
 ];
 
 export const mainManifest = [
-    // preloader module
-    {id: 'preloader', src: 'static/img/content/preloader/preloader.json', type: 'spritesheet'},
-    {id: 'preloaderSprite', src: 'static/img/content/preloader/sprite.json', type: 'spritesheet'},
     // bg module
     {id: 'newBGLight', src: 'static/img/content/bg/newBGLight.png'},
     {id: 'bg', src: 'static/img/content/bg/bg.json', type: 'spritesheet'},
     {id: 'newGameMachine', src: 'static/img/content/new/gameMachine.png'},
     {id: 'rules', src: 'static/img/content/bg/firstRules.png'},
-    {id: 'fonar', src: 'static/img/content/bg/fonar.png'},
     {id: 'home', src: 'static/img/content/new/home.png'},
+    {id: 'logoNecro', src: 'static/img/content/new/logoNecro.png'},
+    // {id: 'winAllNumbersSprite', src: 'static/img/content/new/winAllNumbers.png'},
 
     // buttons module
     {id: 'buttons', src: 'static/img/content/buttons/buttons.json', type: 'spritesheet'},
@@ -24,6 +25,7 @@ export const mainManifest = [
     {id: 'gameShadow', src: 'static/img/content/bg/gameShadow.png'},
 
     // win module
+    {id: 'winAllNumbers', src: 'static/img/content/new/winAllNumbers.json', type: 'spritesheet'},
     {id: 'newLight', src: 'static/img/content/new/newLight_yellow.png'},
     {id: 'winLineRect', src: 'static/img/content/lines/winLineRect.png'},
     {id: 'winTotalRect', src: 'static/img/content/lines/winTotalRect.png'},
@@ -68,6 +70,7 @@ export const mainManifest = [
     {id: 'numbers', src: 'static/img/content/bonuses/numbers.json', type: 'spritesheet'},
     {id: 'bonusWinBG', src: 'static/img/content/new/bonusWinBG.png'},
     {id: 'totalWin', src: 'static/img/content/new/totalWin.png'},
+    {id: 'cultists', src: 'static/img/content/new/cultists.png'},
     {id: 'lizaBonusWin', src: 'static/img/content/new/lizaBonusWin.png'},
     {id: 'bonusCoins', src: 'static/img/content/bonuses/bonusCoins.png'},
     {id: 'bonusLight', src: 'static/img/content/bonuses/bonusLight.png'},
@@ -102,6 +105,9 @@ export const mainManifest = [
     {id: 'pressureDisc', src: 'static/img/content/fs/pressureDisc.png'},
     {id: 'truba', src: 'static/img/content/fs/truba.png'},
     {id: 'chasyFS', src: 'static/img/content/fs/chasyFS.png'},
+    {id: 'cultistBlack1', src: 'static/img/content/fs/cultistBlack1.png'},
+    {id: 'cultistBlack2', src: 'static/img/content/fs/cultistBlack2.png'},
+    {id: 'cultistBlack3', src: 'static/img/content/fs/cultistBlack3.png'},
     {id: 'chasy', src: 'static/img/content/fs/chasy.json', type: 'spritesheet'},
     {id: 'parNaKryshku', src: 'static/img/content/fs/parNaKryshku.json', type: 'spritesheet'},
     {id: 'pressureFire', src: 'static/img/content/fs/pressureFire.png'},
@@ -111,6 +117,8 @@ export const mainManifest = [
     {id: 'logoFire', src: 'static/img/content/fs/logoFire.png'},
     {id: 'parPack', src: 'static/img/content/fs/parPack.json', type: 'spritesheet'},
     {id: 'transitionBG', src: 'static/img/content/bg/transitionBG.png'},
+    {id: 'transitionPopup', src: 'static/img/content/bg/transitionPopup.png'},
+    {id: 'luchi', src: 'static/img/content/bg/luchi.png'},
     {id: 'freeSpins', src: 'static/img/content/bg/freeSpins.png'},
     {id: 'liza', src: 'static/img/content/bg/liza.png'},
     {id: 'fsTable', src: 'static/img/content/fs/fsTable.png'},

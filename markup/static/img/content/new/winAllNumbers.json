@@ -1,0 +1,29 @@
+{
+
+"images": [
+    "static/img/content/new/winAllNumbers.png"
+],
+
+"frames": [
+    [1, 1, 32, 47, 0, -6, -249],
+    [35, 1, 41, 45, 0, -1, -45],
+    [78, 1, 40, 47, 0, -2, -401],
+    [120, 1, 42, 41, 0, 0, 0],
+    [164, 1, 40, 43, 0, -2, -452],
+    [206, 1, 41, 47, 0, -1, -96],
+    [249, 1, 40, 47, 0, -1, -350],
+    [291, 1, 41, 46, 0, 0, -300],
+    [334, 1, 40, 45, 0, -2, -147],
+    [376, 1, 42, 47, 0, 0, -197]
+],
+
+"animations": {
+    "number": { "frames": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] }
+},
+
+"texturepacker": [
+        "SmartUpdateHash: $TexturePacker:SmartUpdate:d986c9eb9be4d2507e55de1da036bb00:bedd3fc54ff9686654ecd88d37de5276:0b11572d748da415f3c61a4abd8a337a$",
+        "Created with TexturePacker (https://www.codeandweb.com/texturepacker) for EaselJS"
+]
+
+}

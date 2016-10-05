@@ -15,7 +15,7 @@ export let utils = (function () {
 
     createjs.Ticker.on('tick', () => {
         const fps = createjs.Ticker.getMeasuredFPS();
-        if (fps < 15) {
+        if (fps < 30) {
             console.info('Current FPS:', fps);
         }
     });
