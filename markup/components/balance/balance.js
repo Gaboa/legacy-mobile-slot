@@ -150,8 +150,8 @@ export let balance = (function () {
         storage.write('currentBalance', balanceData);
     }
 
-    function changeBet(moreOrLess, maxBet) {
-        if (maxBet) {
+    function changeBet(moreOrLess, maxBetFlag) {
+        if (maxBetFlag) {
             balanceData.betValue = balanceData.betSteps[balanceData.betSteps.length - 1];
         } else if (moreOrLess === true && balanceData.betValue !== balanceData.betSteps[balanceData.betSteps.length - 1]) {
             let i = balanceData.betSteps.length;
@@ -185,8 +185,8 @@ export let balance = (function () {
         }
     }
 
-    function changeCoins(moreOrLess, maxBet) {
-        if (maxBet) {
+    function changeCoins(moreOrLess, maxBetFlag) {
+        if (maxBetFlag) {
             balanceData.coinsValue = balanceData.coinsSteps[balanceData.coinsSteps.length - 1];
         } else if (moreOrLess === true && balanceData.coinsValue !== balanceData.coinsSteps[balanceData.coinsSteps.length - 1]) {
             let i = balanceData.coinsSteps.length;
