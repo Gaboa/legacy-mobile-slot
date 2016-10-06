@@ -1,52 +1,60 @@
 import { events } from 'components/events/events';
 
-// Модуль хранилища данных
 export let storage = (function () {
 
     const store = {};
     const state = {};
 
     function write(key, value) {
+
+        if (typeof key !== 'string') return;
         store[key] = value;
+
     }
 
     function read(key) {
-        if (typeof store[key] !== 'undefined') {
-            return store[key];
-        } else {
-            return false;
-        }
+
+        return typeof store[key] !== 'undefined' && store[key];
+
     }
 
     function log() {
+
         console.log('Store is:', store);
+
     }
 
     function changeState(key, value) {
+
+        if (typeof key !== 'string') return;
         state[key] = value;
-        console.log(`State '${key}' changed to: ${value}`);
+
+        console.info(`State '${key}' changed to: ${value}`);
         events.trigger('changeState', key);
+
     }
 
     function readState(key) {
-        if (typeof state[key] !== 'undefined') {
-            return state[key];
-        } else {
-            return false;
-        }
+
+        return typeof state[key] !== 'undefined' && state[key];
+
     }
 
     function logState() {
+
         console.log('State is:', state);
+
     }
 
-    // API
     return {
+
         changeState,
         readState,
         logState,
         write,
         read,
         log
+
     };
+
 })();
