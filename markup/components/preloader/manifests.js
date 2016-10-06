@@ -16,10 +16,12 @@ export const mainManifest = [
     {id: 'gameBG', src: 'static/img/content/bg/gameBG.png'},
     {id: 'gameMachine', src: 'static/img/content/bg/gameMachine.png'},
 
+    // balance module
+    {id: 'balance', src: 'static/img/content/balance/balance.json', type: 'spritesheet'},
 
     // {id: 'bg', src: 'static/img/content/bg/bg.json', type: 'spritesheet'},
-    {id: 'rules', src: 'static/img/content/bg/firstRules.png'},
-    {id: 'fonar', src: 'static/img/content/bg/fonar.png'},
+    {id: 'rules', src: 'static/img/content/bg/trash/firstRules.png'},
+    {id: 'fonar', src: 'static/img/content/bg/trash/fonar.png'},
     {id: 'home', src: 'static/img/content/new/home.png'},
 
     // buttons module
@@ -31,7 +33,7 @@ export const mainManifest = [
     // roll module
     {id: 'new_elements', src: 'static/img/content/new/elements_new3.json', type: 'spritesheet'},
     // {id: 'new_elements', src: 'static/img/content/elements/Bonuses.json', type: 'spritesheet'},
-    {id: 'gameShadow', src: 'static/img/content/bg/gameShadow.png'},
+    {id: 'gameShadow', src: 'static/img/content/bg/trash/gameShadow.png'},
 
     // win module
     {id: 'newLight', src: 'static/img/content/new/newLight_yellow.png'},
@@ -47,10 +49,10 @@ export const mainManifest = [
 
     // bonuses module
     {id: 'bonusPerehodBG', src: 'static/img/content/new/bonusPerehodBG_new.png'},
-    {id: 'youWin', src: 'static/img/content/bg/youWin.png'},
+    {id: 'youWin', src: 'static/img/content/bg/trash/youWin.png'},
     {id: 'bonusLevel', src: 'static/img/content/new/bonusLevel.png'},
     {id: 'lizaBonusPerehod', src: 'static/img/content/new/lizaBonusPerehod.png'},
-    {id: 'But', src: 'static/img/content/bg/But.png'},
+    {id: 'But', src: 'static/img/content/bg/trash/But.png'},
     {id: 'bonusBG_1', src: 'static/img/content/bonuses/bonusBG_1.png'},
     {id: 'bonusBG_2', src: 'static/img/content/bonuses/bonusBG_2.png'},
     {id: 'bonusBG_3', src: 'static/img/content/bonuses/bonusBG_3.png'},
@@ -106,7 +108,7 @@ export const mainManifest = [
     {id: 'fsMachineBG', src: 'static/img/content/fs/fsMachineBG.png'},
     {id: 'fsTotalTable', src: 'static/img/content/fs/fsTotalTable.png'},
     {id: 'fsText', src: 'static/img/content/fs/fsText.json', type: 'spritesheet'},
-    {id: 'fsBG', src: 'static/img/content/bg/fsBG.png'},
+    {id: 'fsBG', src: 'static/img/content/bg/trash/fsBG.png'},
     {id: 'pressure', src: 'static/img/content/fs/pressure.png'},
     {id: 'fireToPressure', src: 'static/img/content/fs/fireToPressure.json', type: 'spritesheet'},
     {id: 'pressureDisc', src: 'static/img/content/fs/pressureDisc.png'},
@@ -120,14 +122,14 @@ export const mainManifest = [
     {id: 'logoTop', src: 'static/img/content/fs/logoTop.png'},
     {id: 'logoFire', src: 'static/img/content/fs/logoFire.png'},
     {id: 'parPack', src: 'static/img/content/fs/parPack.json', type: 'spritesheet'},
-    {id: 'transitionBG', src: 'static/img/content/bg/transitionBG.png'},
-    {id: 'freeSpins', src: 'static/img/content/bg/freeSpins.png'},
-    {id: 'liza', src: 'static/img/content/bg/liza.png'},
+    {id: 'transitionBG', src: 'static/img/content/bg/trash/transitionBG.png'},
+    {id: 'freeSpins', src: 'static/img/content/bg/trash/freeSpins.png'},
+    {id: 'liza', src: 'static/img/content/bg/trash/liza.png'},
     {id: 'fsTable', src: 'static/img/content/fs/fsTable.png'},
     {id: 'plus3', src: 'static/img/content/fs/plus3.png'},
-    {id: 'multiBG', src: 'static/img/content/bg/multiBG.png'},
-    {id: 'multiTitle', src: 'static/img/content/bg/multiTitle.png'},
-    {id: 'multiCoins', src: 'static/img/content/bg/multiCoins.png'},
+    {id: 'multiBG', src: 'static/img/content/bg/trash/multiBG.png'},
+    {id: 'multiTitle', src: 'static/img/content/bg/trash/multiTitle.png'},
+    {id: 'multiCoins', src: 'static/img/content/bg/trash/multiCoins.png'},
     {id: 'x7', src: 'static/img/content/fs/x7.png'},
     {id: 'popup', src: 'static/img/content/new/popup.png'},
 

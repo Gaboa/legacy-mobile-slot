@@ -1,0 +1,26 @@
+{
+
+"images": [
+    "static/img/content/balance/balance-0.png"
+],
+
+"frames": [
+    [1, 1, 27, 27, 0, -1, 0],
+    [1, 30, 28, 25, 0, 0, 0],
+    [1, 57, 26, 22, 0, -1, -3],
+    [1, 81, 28, 22, 0, 0, -3]
+],
+
+"animations": {
+    "auto": { "frames": [0] },
+    "home": { "frames": [1] },
+    "menu": { "frames": [2] },
+    "sound": { "frames": [3] }
+},
+
+"texturepacker": [
+        "SmartUpdateHash: $TexturePacker:SmartUpdate:42a05f0a841eec280ce35c805cc9bff2:4b1a5c4234a13d966c7439d29421593b:e2ce0caed7b216d09af183761e81f760$",
+        "Created with TexturePacker (https://www.codeandweb.com/texturepacker) for EaselJS"
+]
+
+}

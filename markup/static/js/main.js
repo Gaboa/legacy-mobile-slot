@@ -8,7 +8,7 @@ import { preloader } from 'components/preloader/preloader';
 import { bg } from 'components/bg/bg';
 import { balance } from 'components/balance/balance';
 import { buttons } from 'components/buttons/buttons';
-import { controls } from 'components/controls/controls';
+// import { controls } from 'components/controls/controls';
 import { menu } from 'components/menu/menu';
 import { autoplay } from 'components/autoplay/autoplay';
 import { roll } from 'components/roll/roll';
@@ -21,16 +21,14 @@ init.start({
     userID: 1,
     casinoID: 1,
     mode: 'normal',
-    device: 'mobile'
+    isMobile: false
 });
 init.login();
 
 // Canvas Module
 canvas.start({
-    canvas: '#game',
-    mouseOver: 0,
-    leftToRight: 150,
-    timeToSlide: 0.5
+    mouseOver: 10,
+    leftToRight: 150
 });
 events.on('init:inited', canvas.initStage);
 events.on('menu:changeSide', canvas.changeSide);
@@ -93,10 +91,10 @@ events.on('finishFreeSpins', buttons.changeVisibility);
 events.on('finishFreeSpins', buttons.removeAutoplay);
 
 // Controls Module
-if (storage.read('device') === 'desktop') {
-    controls.start();
-    events.on('bg:main', controls.drawControlsPanel);
-}
+// if (storage.read('device') === 'desktop') {
+//     controls.start();
+//     events.on('bg:main', controls.drawControlsPanel);
+// }
 
 // Menu Module
 menu.start({
