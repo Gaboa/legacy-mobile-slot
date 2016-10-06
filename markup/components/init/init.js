@@ -7,13 +7,12 @@ export let init = (function () {
 
     let config;
     const defaultConfig = {
-        device: 'mobile',
+        isMobile: true,
         mode: 'normal',
         userID: 1,
         casinoID: 1
     };
 
-    // qo2 - двери, qo5 - фри-спины, qos - стандартный режим
     const mode = {
         normal: 'qos',
         fsBonus: 'qo5',
@@ -24,16 +23,20 @@ export let init = (function () {
     const savedBonus = {};
 
     function start(configObj) {
+
         config = configObj || defaultConfig;
-        storage.write('device', config.device);
+        storage.write('isMobile', config.isMobile);
+
     }
 
     function checkPlayerState(state) {
+
         if (!state.Saved) {
-            // Если нет сохраненных сесий
+
             storage.changeState('mode', 'normal');
+
         } else if (state.Saved.ResultType === 'Freespin') {
-            // Обработка оборванных фри-спинов
+
             savedFS.count = state.Saved.RemainSpins;
             savedFS.multi = state.Saved.Multiplier.MultiplierValue;
             savedFS.level = state.Saved.Multiplier.MultiplierStep;
@@ -42,21 +45,33 @@ export let init = (function () {
 
             storage.changeState('mode', 'fsBonus');
             storage.write('savedFS', savedFS);
+
         } else if (state.Saved.ResultType === 'MultiplierBonus') {
-            // Обработка оборванных бонусов
 
             storage.changeState('mode', 'bonus');
             storage.write('savedBonus', savedBonus);
+
         }
+
     }
 
     function checkCasinoData(store) {
-        if (store.getItem('userID')) {
-            config.userID = store.getItem('userID');
-        }
-        if (store.getItem('casinoID')) {
-            config.casinoID = store.getItem('casinoID');
-        }
+
+        config.userID = store.getItem('userID') ? store.getItem('userID') : config.userID;
+        config.casinoID = store.getItem('casinoID') ? store.getItem('casinoID') : config.casinoID;
+
+    }
+
+    function handleUnload(event) {
+
+        utils.request('_Logout/', storage.read('sessionID'))
+            .then((response) => {
+
+                events.trigger('init:logout');
+                console.warn('Logout response:', response);
+
+            });
+
     }
 
     function login() {
@@ -85,26 +100,22 @@ export let init = (function () {
                 storage.write('linesCoords', linesCoords);
 
                 // Заканчиваем инициализацию
-                storage.changeState('inited', true);
                 events.trigger('init:inited');
 
                 // Проверяем наличие сохранненых сесий
                 checkPlayerState(initData.PlayerState);
 
                 // Цепляем Logout к закрытию вкладки
-                $(window).unload(function () {
-                    utils.request('_Logout/', storage.read('sessionID'))
-                    .then((response) => {
-                        events.trigger('init:logout');
-                        console.log('Logout response:', response);
-                    });
-                });
+                $(window).unload(handleUnload);
+
             })
             .catch(error => console.error(error));
+
     }
 
     return {
         start,
         login
     };
+
 })();
