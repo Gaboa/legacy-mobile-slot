@@ -18,7 +18,9 @@ export let bg = (function () {
     };
 
     function start(configObj) {
+
         config = configObj || defaultConfig;
+
     }
 
     function drawMainBG() {
@@ -36,7 +38,7 @@ export let bg = (function () {
         bgContainer.addChild(mainBG);
 
         // mainContainer
-        if (storage.read('device') === 'mobile') {
+        if (storage.read('isMobile')) {
 
             mainContainer = new c.Container().set({
                 name: 'mainContainer',
@@ -45,7 +47,7 @@ export let bg = (function () {
             });
             storage.write('mainContainer', mainContainer);
 
-        } else if (storage.read('device') === 'desktop') {
+        } else {
 
             mainContainer = new c.Container().set({
                 name: 'mainContainer',
@@ -58,9 +60,7 @@ export let bg = (function () {
 
         }
 
-        const gameMachine = new c.Bitmap(loader.getResult('gameMachine')).set({
-            name: 'gameMachine'
-        });
+        const gameMachine = new c.Bitmap(loader.getResult('gameMachine')).set({ name: 'gameMachine' });
 
         const gameBG = new c.Bitmap(loader.getResult('gameBG')).set({
             name: 'gameBG',
@@ -71,12 +71,12 @@ export let bg = (function () {
         mainContainer.addChild(gameBG, gameMachine);
         stage.addChildAt(bgContainer, mainContainer, 0);
 
-        if (storage.read('device') === 'mobile') {
+        if (storage.read('isMobile')) {
 
             events.trigger('bg:changeSide', 'left');
             storage.changeState('side', 'left');
 
-        } else if (storage.read('device') === 'desktop') {
+        } else {
 
             events.trigger('bg:changeSide', 'right');
             storage.changeState('side', 'right');
