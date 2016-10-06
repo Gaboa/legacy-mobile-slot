@@ -6,15 +6,15 @@ export let canvas = (function () {
 
     let config;
     const defaultConfig = {
-        canvas: '#game',
         mouseOver: 10,
-        leftToRight: 150,
-        timeToSlide: 0.5
+        leftToRight: 150
     };
     const c = createjs;
 
     function start(configObj) {
+
         config = configObj || defaultConfig;
+
     }
 
     function initStage() {
@@ -28,23 +28,24 @@ export let canvas = (function () {
         c.Ticker.timingMode = c.Ticker.RAF;
         c.Ticker.on('tick', stage);
 
-        // Запишем холст в Storage
-        storage.write('stage', stage);
         // Сцена создана
-        storage.changeState('stage', true);
+        storage.write('stage', stage);
         events.trigger('canvas:stage', stage);
 
     }
 
     function fullScreen(e) {
-        e = e || document.querySelector(config.canvas);
+
+        e = e || document.querySelector('#game');
         /* eslint-disable */
         e.requestFullScreen ? e.requestFullScreen() : e.mozRequestFullScreen ? e.mozRequestFullScreen() : e.webkitRequestFullScreen && e.webkitRequestFullScreen();
         /* eslint-enable */
         iosFullScreenHack();
+
     }
 
     function iosFullScreenHack() {
+
         if ($('html').hasClass('ios') || $('html').hasClass('iphone')) {
             $(document).bind('touchmove', false);
         }
@@ -53,6 +54,7 @@ export let canvas = (function () {
                 $('h1').hide();
             }
         });
+
     }
 
     function changeSide(side) {
@@ -61,7 +63,7 @@ export let canvas = (function () {
         const stage = storage.read('stage');
         const mainContainer = storage.read('mainContainer');
         const balanceContainer = stage.getChildByName('balanceContainer');
-        const balanceText = balanceContainer.getChildByName('balanceTextContainer');
+        const balanceTextContainer = balanceContainer.getChildByName('balanceTextContainer');
 
         switch (side) {
             case 'right':
@@ -77,7 +79,7 @@ export let canvas = (function () {
         }
 
         balanceContainer.uncache();
-        TweenMax.to([mainContainer, balanceText], config.timeToSlide, {x: delta, onComplete: () => {
+        TweenMax.to([mainContainer, balanceTextContainer], 0.5, {x: delta, onComplete: () => {
             balanceContainer.cache(0, 0, utils.width, utils.height);
         }});
 
@@ -87,7 +89,7 @@ export let canvas = (function () {
         start,
         initStage,
         changeSide,
-        fullScreen,
-        iosFullScreenHack
+        fullScreen
     };
+
 })();
