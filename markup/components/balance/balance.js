@@ -289,7 +289,7 @@ export let balance = (function () {
 
         // Добавим баланс на сцену
         balanceContainer.addChild(balanceTextContainer);
-        stage.addChildAt(balanceContainer, stage.getChildIndex(stage.getChildByName('initContainer')) - 1);
+        stage.addChildAt(balanceContainer, stage.getChildIndex(stage.getChildByName('mainContainer')) + 1);
         balanceContainer.cache(0, 0, utils.width, utils.height);
 
         storage.write('currentBalance', balanceData);
