@@ -191,6 +191,28 @@ export let balance = (function () {
             });
             utils.getCenterPoint(autoButton);
 
+            menuButton.on('click', (event) => {
+                if (storage.readState('lockedMenu')) return;
+
+                c.Sound.play('buttonClickSound');
+                storage.changeState('menu', 'settings');
+                events.trigger('buttons:showMenu', 'settings');
+            });
+            soundButton.on('click', (event) => {
+                if (storage.readState('lockedMenu')) return;
+
+                c.Sound.play('buttonClickSound');
+                c.Sound.muted = !c.Sound.muted;
+                storage.changeState('sound', !storage.readState('sound'));
+            });
+            autoButton.on('click', (event) => {
+                if (storage.readState('lockedMenu')) return;
+
+                c.Sound.play('buttonClickSound');
+                storage.changeState('menu', 'auto');
+                events.trigger('buttons:showMenu', 'auto');
+            });
+
             balanceButtons.addChild(menuButton, soundButton, autoButton);
 
         }
