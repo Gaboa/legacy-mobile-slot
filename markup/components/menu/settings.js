@@ -182,11 +182,9 @@ function handleFastSpinClick() {
 function handleHandModeClick() {
     if (storage.readState('side') === 'left') {
         events.trigger('menu:changeSide', 'right');
-        events.trigger('menu:changeSide');
         this.gotoAndStop('handMode_on');
     } else {
         events.trigger('menu:changeSide', 'left');
-        events.trigger('menu:changeSide');
         this.gotoAndStop('handMode_off');
     }
 }
