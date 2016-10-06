@@ -1,12 +1,15 @@
 export const preloaderManifest = [
-    {id: 'preloaderCoin', src: 'static/img/content/preloader/coin.json', type: 'spritesheet'},
-    {id: 'preloaderLine', src: 'static/img/content/preloader/line.json', type: 'spritesheet'}
+    {id: 'coin', src: 'static/img/content/preloader/coin.json', type: 'spritesheet'},
+    {id: 'line', src: 'static/img/content/preloader/line.json', type: 'spritesheet'}
 ];
 
 export const mainManifest = [
-    // preloader module
-    {id: 'preloader', src: 'static/img/content/preloader/hd/preloader.json', type: 'spritesheet'},
-    {id: 'preloaderSprite', src: 'static/img/content/preloader/hd/sprite.json', type: 'spritesheet'},
+
+    // init screen
+    {id: 'initBG', src: 'static/img/content/preloader/initBG.png'},
+    {id: 'initLogo', src: 'static/img/content/preloader/initLogo.png'},
+    {id: 'initPlay', src: 'static/img/content/preloader/initPlay.png'},
+    {id: 'clock', src: 'static/img/content/preloader/clock.json', type: 'spritesheet'},
 
     // bg module
     {id: 'mainBG', src: 'static/img/content/bg/mainBG.png'},

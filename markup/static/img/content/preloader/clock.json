@@ -1,5 +1,5 @@
 {
-    "images": ["static/img/content/preloader/sprite.png"],
+    "images": ["static/img/content/preloader/clock.png"],
     "frames": {
         "width": 631,
         "height": 403,

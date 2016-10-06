@@ -178,6 +178,8 @@ export let balance = (function () {
         balanceContainer.addChild(balanceTextContainer);
         balanceContainer.cache(0, 0, utils.width, utils.height);
         stage.addChildAt(balanceContainer, stage.getChildIndex(stage.getChildByName('preloaderContainer')));
+        const init = stage.getChildByName('initContainer');
+        stage.addChildAt(balanceContainer, stage.getChildIndex(init) - 1);
 
         storage.write('currentBalance', balanceData);
         setTimeout(updateBalance, 500); // Для того чтобы подгрузились шрифты и отобразить нужным шрифтом.

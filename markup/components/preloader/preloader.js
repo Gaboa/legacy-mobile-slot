@@ -1,7 +1,7 @@
 import { utils } from 'components/utils/utils';
 import { storage } from 'components/storage/storage';
 import { events } from 'components/events/events';
-import {preloaderManifest,
+import { preloaderManifest,
         mainManifest,
         preloaderManifestFullHD} from 'components/preloader/manifests';
 
@@ -20,7 +20,7 @@ export let preloader = (function () {
 
     function startPreloader() {
 
-        const loader = new c.LoadQueue(true);
+        let loader = new c.LoadQueue(true);
         loader.setMaxConnections(4);
         loader.on('complete', showPreloader);
         loader.loadManifest(preloaderManifest);
@@ -30,168 +30,170 @@ export let preloader = (function () {
     function showPreloader(event) {
 
         stage = storage.read('stage');
-        const loader = event.target;
+        let loader = event.target;
 
-        //  New Preloader
-        const newPreloaderContainer = new c.Container().set({ name: 'newPreloaderContainer' });
+        //  Container
+        let preloaderContainer = new c.Container().set({ name: 'preloaderContainer' });
 
-        const darkBG = new c.Shape();
+        let darkBG = new c.Shape();
         darkBG.graphics.beginFill('#000').drawRect(0, 0, utils.width, utils.height);
 
         //  Preloader Line
-        const lineSS = loader.getResult('preloaderLine');
-        const line = new c.Sprite(lineSS).set({
-            name: 'preloaderLine',
-            y: 450
+        let lineSS = loader.getResult('line');
+        let line = new c.Sprite(lineSS).set({
+            name: 'line',
+            y: 450 // Magic Numbers
         });
         utils.getCenterPoint(line);
         utils.setInCenterOf(line, utils.width);
         line.paused = true;
 
         // Preloader Coin
-        const coinSS = loader.getResult('preloaderCoin');
-        const coin = new c.Sprite(coinSS, 'coin').set({
-            name: 'preloaderCoin',
-            y: 200,
+        let coinSS = loader.getResult('coin');
+        let coin = new c.Sprite(coinSS, 'coin').set({
+            name: 'coin',
+            y: 200, // Magic Numbers
             framerate: 20
         });
         utils.getCenterPoint(coin);
         utils.setInCenterOf(coin, utils.width);
         coin.play();
 
-        newPreloaderContainer.addChild(darkBG, line, coin);
+        preloaderContainer.addChild(darkBG, line, coin);
 
-        stage.addChild(newPreloaderContainer);
+        stage.addChild(preloaderContainer);
 
-        mainPreload(newPreloaderContainer);
+        mainPreload();
 
     }
 
     function drawInitScreen() {
 
-        const loader = storage.read('loadResult');
+        let loader = storage.read('loadResult');
 
-        // Spritesheets
-        const ss = loader.getResult('preloader');
-        const clock = loader.getResult('preloaderSprite');
+        //  Container
+        let initContainer = new c.Container().set({ name: 'initContainer' });
 
-        //  Containers
-        const preloaderContainer = new c.Container().set({ name: 'preloaderContainer' });
-        const preloaderCache = new c.Container().set({ name: 'preloaderCache' });
+        let initBG = new c.Bitmap(loader.getResult('initBG')).set({ name: 'initBG' });
 
-        const preloaderBG = new c.Sprite(ss, 'bg').set({ name: 'preloaderBG' });
-
-        const preloaderLogo = new c.Sprite(ss, 'logo');
-        preloaderLogo.set({
-            name: 'preloaderLogo',
-            x: (utils.width - preloaderLogo.getBounds().width) / 2,
-            y: 75
+        let initLogo = new c.Bitmap(loader.getResult('initLogo')).set({
+            name: 'initLogo',
+            y: 100 // Magic Numbers
         });
+        utils.getCenterPoint(initLogo);
+        utils.setInCenterOf(initLogo, utils.width);
 
-        const preloaderPlay = new c.Sprite(ss, 'play');
-        preloaderPlay.set({
-            name: 'preloaderPlay',
-            x: (utils.width - preloaderPlay.getBounds().width) / 2,
-            y: 310
+        let initPlay = new c.Bitmap(loader.getResult('initPlay')).set({
+            name: 'initPlay',
+            y: 340 // Magic Numbers
         });
+        utils.getCenterPoint(initPlay);
+        utils.setInCenterOf(initPlay, utils.width);
 
-        const preloaderSprite = new c.Sprite(clock, 'start');
-        preloaderSprite.set({
-            name: 'preloaderSprite',
-            x: (utils.width - preloaderSprite.getBounds().width) / 2 - 100,
-            y: 150
+        let clock = new c.Sprite(loader.getResult('clock'), 'start').set({
+            name: 'clock',
+            x: utils.width / 2 - 100,
+            y: 320 // Magic Numbers
         });
-        preloaderSprite.paused = true;
+        utils.getCenterPoint(clock);
+        clock.paused = true;
 
-        preloaderCache.addChild(preloaderBG, preloaderLogo);
-        preloaderCache.cache(0, 0, utils.width, utils.height);
-        preloaderContainer.addChild(preloaderCache, preloaderPlay, preloaderSprite);
-        preloaderContainer.on('click', function (e) {
+        initContainer.addChild(initBG, initLogo, initPlay, clock);
+        initContainer.on('click', (e) => {
             e.stopPropagation();
         });
-        stage.addChildAt(preloaderContainer, stage.getChildIndex(stage.getChildByName('newPreloaderContainer')));
+        stage.addChildAt(initContainer, stage.getChildIndex(stage.getChildByName('preloaderContainer')));
+
     }
 
-    function mainPreload(container) {
-        const sprite = container.getChildByName('preloaderLine');
-        const loader = new c.LoadQueue(true);
+    function mainPreload() {
+
+        let loader = new c.LoadQueue(true);
         loader.installPlugin(c.Sound);
         loader.setMaxConnections(20);
         loader.loadManifest(mainManifest);
 
-        loader.on('progress', handleLoadProgress, loader, false, {
-            sprite
-        });
-        loader.on('complete', handleLoadComplete, loader, true, {
-            container
-        });
+        loader.on('progress', handleLoadProgress);
+        loader.on('complete', handleLoadComplete, null, true);
 
     }
 
-    function handleLoadProgress(event, data) {
-        const sprite = data.sprite;
-        const progress = event.progress;
-        const framesNumber = sprite.spriteSheet.getNumFrames('start');
-        const currentFrame = Math.ceil(progress * framesNumber) - 1;
+    function handleLoadProgress(event) {
+
+        let container = stage.getChildByName('preloaderContainer');
+        let sprite = container.getChildByName('line');
+
+        let progress = event.progress;
+        let framesNumber = sprite.spriteSheet.getNumFrames('start');
+        let currentFrame = Math.floor(progress * framesNumber) - 1;
         sprite.gotoAndStop(currentFrame);
         if (progress === 1) {
             event.remove();
         }
+
     }
 
-    function handleLoadComplete(event, data) {
+    function handleLoadComplete(event) {
 
         storage.write('loadResult', event.target);
 
-        drawInitScreen();
-
         setTimeout(clearPreloader, 100);
+
+        drawInitScreen();
 
     }
 
     function clearPreloader() {
 
         let preloaderContainer = stage.getChildByName('preloaderContainer');
-        let preloaderSprite = preloaderContainer.getChildByName('preloaderSprite');
-        let play = preloaderContainer.getChildByName('preloaderPlay');
-        play.on('click', handlePlayClick, play, true);
+        let initContainer = stage.getChildByName('initContainer');
+        let clock = initContainer.getChildByName('clock');
+        let play = initContainer.getChildByName('initPlay');
 
-        let newPreloaderContainer = stage.getChildByName('newPreloaderContainer');
-        newPreloaderContainer.cache(0, 0, utils.width, utils.height);
-        TweenMax.to(newPreloaderContainer, 0.5, {alpha: 0, onComplete: function () {
-            preloaderSprite.play();
-            storage.changeState('loaded', true);
+        play.on('click', handlePlayClick, null, true);
+
+        preloaderContainer.cache(0, 0, utils.width, utils.height);
+
+        TweenMax.to(preloaderContainer, 0.5, {alpha: 0, onComplete: function () {
+
+            clock.play();
             events.trigger('preloader:loaded');
-            stage.removeChild(newPreloaderContainer);
+            stage.removeChild(preloaderContainer);
+
         }});
 
     }
 
-    function handlePlayClick(event, data) {
+    function handlePlayClick(event) {
+
+        let loader = storage.read('loadResult');
+        let initContainer = storage.read('stage').getChildByName('initContainer');
+
         events.trigger('preloader:goFullscreen');
         storage.changeState('fastSpinSetting', false);
 
         // Это стоит вынести в модуль музыки
-        const ambient = c.Sound.play('ambientSound', {loop: -1});
+        let ambient = c.Sound.play('ambientSound', {loop: -1});
         storage.write('ambient', ambient);
         storage.changeState('music', true);
-        // Конец фрагмента
+        storage.changeState('sound', true);
 
-        const loader = storage.read('loadResult');
-        const container = storage.read('stage').getChildByName('preloaderContainer');
-        container.cache(0, 0, utils.width, utils.height);
+        initContainer.cache(0, 0, utils.width, utils.height);
 
-        TweenMax.to(container, 1, {alpha: 0, onComplete: function () {
-            stage.removeChild(container);
-            storage.changeState('preloader', 'done');
+        TweenMax.to(initContainer, 1, {alpha: 0, onComplete: function () {
+
             events.trigger('preloader:done');
+            stage.removeChild(initContainer);
+
         }});
 
     }
 
     return {
+
         start,
         startPreloader
+
     };
 
 })();
