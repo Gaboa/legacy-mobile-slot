@@ -14,7 +14,7 @@ export let bg = (function () {
     const defaultConfig = {
         gameDeltaWidth: 20,
         gameDeltaHeight: 80,
-        desktopScale: 0.8
+        desktopScale: 0.86
     };
 
     function start(configObj) {
@@ -51,7 +51,7 @@ export let bg = (function () {
 
             mainContainer = new c.Container().set({
                 name: 'mainContainer',
-                x: 200, // Magic Numbers
+                x: 350, // Magic Numbers
                 y: 10, // Magic Numbers
                 scaleX: config.desktopScale,
                 scaleY: config.desktopScale
