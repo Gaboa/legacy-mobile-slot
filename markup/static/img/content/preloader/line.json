@@ -1,5 +1,5 @@
 {
-    "images": ["static/img/content/preloader/new/line.png"],
+    "images": ["static/img/content/preloader/line.png"],
     "frames": {
         "width": 818,
         "height": 45,

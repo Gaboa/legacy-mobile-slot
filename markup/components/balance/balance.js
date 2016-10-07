@@ -138,11 +138,11 @@ export let balance = (function () {
         let homeButton;
         let soundButton;
         let menuButton;
-        let autoButton;
+        let fastButton;
 
         if (storage.read('isMobile')) {
 
-            homeButton = new c.Sprite(loader.getResult('balance'), 'home').set({
+            homeButton = new c.Sprite(loader.getResult('balance'), 'homeOn').set({
                 name: 'homeButton',
                 x: 25, // Magic Numbers
                 y: utils.height - config.topLineHeight / 2 - config.bottomLineHeight
@@ -151,7 +151,7 @@ export let balance = (function () {
 
         } else {
 
-            homeButton = new c.Sprite(loader.getResult('balance'), 'home').set({
+            homeButton = new c.Sprite(loader.getResult('balance'), 'homeOn').set({
                 name: 'homeButton',
                 x: 15, // Magic Numbers
                 y: utils.height - config.bottomLineHeight / 2,
@@ -161,7 +161,7 @@ export let balance = (function () {
             });
             utils.getCenterPoint(homeButton);
 
-            menuButton = new c.Sprite(loader.getResult('balance'), 'menu').set({
+            menuButton = new c.Sprite(loader.getResult('balance'), 'menuOn').set({
                 name: 'menuButton',
                 x: 40, // Magic Numbers
                 y: utils.height - config.bottomLineHeight / 2,
@@ -171,9 +171,9 @@ export let balance = (function () {
             });
             utils.getCenterPoint(menuButton);
 
-            soundButton = new c.Sprite(loader.getResult('balance'), 'sound').set({
+            soundButton = new c.Sprite(loader.getResult('balance'), 'soundOn').set({
                 name: 'soundButton',
-                x: 65, // Magic Numbers
+                x: 67, // Magic Numbers
                 y: utils.height - config.bottomLineHeight / 2,
                 scaleX: 0.6,
                 scaleY: 0.6,
@@ -181,15 +181,15 @@ export let balance = (function () {
             });
             utils.getCenterPoint(soundButton);
 
-            autoButton = new c.Sprite(loader.getResult('balance'), 'auto').set({
-                name: 'autoButton',
+            fastButton = new c.Sprite(loader.getResult('balance'), 'fastOff').set({
+                name: 'fastButton',
                 x: 90, // Magic Numbers
                 y: utils.height - config.bottomLineHeight / 2,
                 scaleX: 0.6,
                 scaleY: 0.6,
                 cursor: 'pointer'
             });
-            utils.getCenterPoint(autoButton);
+            utils.getCenterPoint(fastButton);
 
             menuButton.on('click', (event) => {
                 if (storage.readState('lockedMenu')) return;
@@ -198,22 +198,39 @@ export let balance = (function () {
                 storage.changeState('menu', 'settings');
                 events.trigger('buttons:showMenu', 'settings');
             });
+
             soundButton.on('click', (event) => {
                 if (storage.readState('lockedMenu')) return;
 
                 c.Sound.play('buttonClickSound');
                 c.Sound.muted = !c.Sound.muted;
                 storage.changeState('sound', !storage.readState('sound'));
+
+                if (storage.readState('sound')) {
+                    soundButton.gotoAndStop('soundOn');
+                } else {
+                    soundButton.gotoAndStop('soundOff');
+                }
+
+                balanceContainer.updateCache();
             });
-            autoButton.on('click', (event) => {
+
+            fastButton.on('click', (event) => {
                 if (storage.readState('lockedMenu')) return;
 
                 c.Sound.play('buttonClickSound');
-                storage.changeState('menu', 'auto');
-                events.trigger('buttons:showMenu', 'auto');
+                storage.changeState('fastSpinSetting', !storage.readState('fastSpinSetting'));
+
+                if (storage.readState('fastSpinSetting')) {
+                    fastButton.gotoAndStop('fastOn');
+                } else {
+                    fastButton.gotoAndStop('fastOff');
+                }
+
+                balanceContainer.updateCache();
             });
 
-            balanceButtons.addChild(menuButton, soundButton, autoButton);
+            balanceButtons.addChild(menuButton, soundButton, fastButton);
 
         }
 

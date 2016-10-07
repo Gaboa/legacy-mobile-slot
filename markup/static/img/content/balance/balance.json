@@ -6,20 +6,40 @@
 
 "frames": [
     [1, 1, 27, 27, 0, -1, 0],
-    [1, 30, 28, 25, 0, 0, 0],
-    [1, 57, 26, 22, 0, -1, -3],
-    [1, 81, 28, 22, 0, 0, -3]
+    [30, 1, 28, 28, 0, -6, 0],
+    [60, 1, 28, 28, 0, -6, 0],
+    [90, 1, 28, 28, 0, -6, 0],
+    [120, 1, 28, 25, 0, 0, 0],
+    [150, 1, 29, 26, 0, -6, 0],
+    [181, 1, 29, 26, 0, -6, 0],
+    [212, 1, 26, 22, 0, -1, 0],
+    [240, 1, 30, 25, 0, -5, 0],
+    [272, 1, 30, 25, 0, -5, 0],
+    [304, 1, 28, 22, 0, 0, 0],
+    [334, 1, 37, 27, 0, -2, 0],
+    [373, 1, 37, 27, 0, -2, 0],
+    [412, 1, 37, 27, 0, -2, 0]
 ],
 
 "animations": {
     "auto": { "frames": [0] },
-    "home": { "frames": [1] },
-    "menu": { "frames": [2] },
-    "sound": { "frames": [3] }
+    "fastHover": { "frames": [1] },
+    "fastOff": { "frames": [2] },
+    "fastOn": { "frames": [3] },
+    "home": { "frames": [4] },
+    "homeHover": { "frames": [5] },
+    "homeOn": { "frames": [6] },
+    "menu": { "frames": [7] },
+    "menuHover": { "frames": [8] },
+    "menuOn": { "frames": [9] },
+    "sound": { "frames": [10] },
+    "soundHover": { "frames": [11] },
+    "soundOff": { "frames": [12] },
+    "soundOn": { "frames": [13] }
 },
 
 "texturepacker": [
-        "SmartUpdateHash: $TexturePacker:SmartUpdate:42a05f0a841eec280ce35c805cc9bff2:4b1a5c4234a13d966c7439d29421593b:e2ce0caed7b216d09af183761e81f760$",
+        "SmartUpdateHash: $TexturePacker:SmartUpdate:8df2070cc9d35a88624163712f4cb5a3:e011e9f9b6f8531424ecb534c382965d:e2ce0caed7b216d09af183761e81f760$",
         "Created with TexturePacker (https://www.codeandweb.com/texturepacker) for EaselJS"
 ]
 
