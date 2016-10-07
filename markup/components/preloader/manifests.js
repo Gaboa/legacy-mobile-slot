@@ -29,6 +29,7 @@ export const mainManifest = [
 
     // controls module
     {id: 'controlsBG', src: 'static/img/content/controls/controlsBG.png'},
+    {id: 'controlsButtons', src: 'static/img/content/controls/buttons.json', type: 'spritesheet'},
 
     // roll module
     {id: 'new_elements', src: 'static/img/content/new/elements_new3.json', type: 'spritesheet'},
