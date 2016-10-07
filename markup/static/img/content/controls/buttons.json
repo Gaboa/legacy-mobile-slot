@@ -1,0 +1,64 @@
+{
+
+"images": [
+    "static/img/content/controls/buttons.png"
+],
+
+"frames": [
+    [1, 1, 134, 129, 0, 0, 0],
+    [137, 1, 134, 129, 0, 0, 0],
+    [273, 1, 134, 129, 0, 0, 0],
+    [409, 1, 134, 129, 0, 0, 0],
+    [1, 132, 153, 52, 0, 0, 0],
+    [545, 1, 153, 52, 0, 0, 0],
+    [1, 186, 153, 52, 0, 0, 0],
+    [156, 132, 153, 52, 0, 0, 0],
+    [545, 55, 153, 52, 0, 0, 0],
+    [156, 186, 153, 52, 0, 0, 0],
+    [311, 132, 153, 52, 0, 0, 0],
+    [311, 186, 153, 52, 0, 0, 0],
+    [545, 109, 153, 52, 0, 0, 0],
+    [466, 163, 153, 52, 0, 0, 0],
+    [621, 163, 153, 52, 0, 0, 0],
+    [700, 1, 38, 38, 0, 0, 0],
+    [740, 1, 38, 38, 0, 0, 0],
+    [700, 41, 38, 38, 0, 0, 0],
+    [740, 41, 38, 38, 0, 0, 0],
+    [700, 81, 38, 38, 0, 0, 0],
+    [740, 81, 38, 38, 0, 0, 0],
+    [700, 121, 38, 38, 0, 0, 0],
+    [740, 121, 38, 38, 0, 0, 0]
+],
+
+"animations": {
+    "spinAuto": { "frames": [0] },
+    "spinHover": { "frames": [1] },
+    "spinOn": { "frames": [2] },
+    "spinOut": { "frames": [3] },
+    "autoHover": { "frames": [4] },
+    "autoOff": { "frames": [5] },
+    "autoOn": { "frames": [6] },
+    "autoOut": { "frames": [7] },
+    "autoStopHover": { "frames": [8] },
+    "autoStopOn": { "frames": [9] },
+    "autoStopOut": { "frames": [10] },
+    "maxbetHover": { "frames": [11] },
+    "maxbetOff": { "frames": [12] },
+    "maxbetOn": { "frames": [13] },
+    "maxbetOut": { "frames": [14] },
+    "minusHover": { "frames": [15] },
+    "minusOff": { "frames": [16] },
+    "minusOn": { "frames": [17] },
+    "minusOut": { "frames": [18] },
+    "plusHover": { "frames": [19] },
+    "plusOff": { "frames": [20] },
+    "plusOn": { "frames": [21] },
+    "plusOut": { "frames": [22] }
+},
+
+"texturepacker": [
+        "SmartUpdateHash: $TexturePacker:SmartUpdate:1560eeabf4a2834a250703dadc01210a:7be5b53c88935b00ae16e3178ecb1530:a277b1bc9a9df0654a6d7d35ff1c0c05$",
+        "Created with TexturePacker (https://www.codeandweb.com/texturepacker) for EaselJS"
+]
+
+}

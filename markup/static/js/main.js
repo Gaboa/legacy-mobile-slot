@@ -8,7 +8,7 @@ import { preloader } from 'components/preloader/preloader';
 import { bg } from 'components/bg/bg';
 import { balance } from 'components/balance/balance';
 import { buttons } from 'components/buttons/buttons';
-// import { controls } from 'components/controls/controls';
+import { controls } from 'components/controls/controls';
 import { menu } from 'components/menu/menu';
 import { autoplay } from 'components/autoplay/autoplay';
 import { roll } from 'components/roll/roll';
@@ -56,7 +56,7 @@ balance.start();
 events.on('bg:main', balance.initBalance);
 events.on('menu:changeBet', balance.changeBet);
 events.on('menu:changeCoins', balance.changeCoins);
-events.on('menu:maxBet', balance.getMaxBet);
+events.on('menu:maxBet', balance.maxBet);
 events.on('roll:started', balance.startRoll);
 events.on('roll:ended', balance.endRoll);
 
@@ -91,10 +91,10 @@ events.on('finishFreeSpins', buttons.changeVisibility);
 events.on('finishFreeSpins', buttons.removeAutoplay);
 
 // Controls Module
-// if (storage.read('device') === 'desktop') {
-//     controls.start();
-//     events.on('bg:main', controls.drawControlsPanel);
-// }
+if (!storage.read('isMobile')) {
+    // controls.start();
+    events.on('bg:main', controls.drawControlsBG);
+}
 
 // Menu Module
 menu.start({
