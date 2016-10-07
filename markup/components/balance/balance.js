@@ -16,6 +16,7 @@ export let balance = (function () {
     const c = createjs;
     const balanceContainer = new c.Container().set({ name: 'balanceContainer' });
     const balanceTextContainer = new c.Container().set({ name: 'balanceTextContainer' });
+    const balanceCash = new c.Container().set({ name: 'balanceCash' });
     const balanceButtons = new c.Container().set({ name: 'balanceButtons' });
 
     const balanceText = {};
@@ -271,6 +272,21 @@ export let balance = (function () {
         balanceText.winCashText = new c.Text('Win:', parameters.font, parameters.greyColor).set(parameters.winCashText);
         balanceText.winCash = new c.Text(currencySymbol + balanceData.winCash, parameters.font, parameters.color).set(parameters.winCash);
         makeTextDelta(balanceText.coinsCashText, balanceText.coinsCash, config.textDelta);
+        makeTextDelta(balanceText.betCashText, balanceText.betCash, config.textDelta);
+        makeTextDelta(balanceText.winCashText, balanceText.winCash, config.textDelta);
+
+        balanceCash.addChild(
+            balanceText.coinsCash,
+            balanceText.coinsCashText,
+            balanceText.betCash,
+            balanceText.betCashText,
+            balanceText.winCash,
+            balanceText.winCashText
+        );
+
+        if (!storage.read('isMobile')) {
+            balanceCash.x = 75; // Magic Number
+        }
 
         if (storage.read('isMobile')) {
 
@@ -295,17 +311,11 @@ export let balance = (function () {
             balanceText.coinsSum,
             balanceText.coinsSumText,
             balanceText.betSum,
-            balanceText.betSumText,
-            balanceText.coinsCash,
-            balanceText.coinsCashText,
-            balanceText.betCash,
-            balanceText.betCashText,
-            balanceText.winCash,
-            balanceText.winCashText
+            balanceText.betSumText
         );
 
         // Добавим баланс на сцену
-        balanceContainer.addChild(balanceTextContainer);
+        balanceContainer.addChild(balanceCash, balanceTextContainer);
         stage.addChildAt(balanceContainer, stage.getChildIndex(stage.getChildByName('mainContainer')) + 1);
         balanceContainer.cache(0, 0, utils.width, utils.height);
 
