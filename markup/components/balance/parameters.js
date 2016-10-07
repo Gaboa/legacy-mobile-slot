@@ -64,34 +64,34 @@ export const parameters = {
     },
     desktop: {
         betSum: {
-            x: 315,
-            y: 549,
+            x: 417,
+            y: 591,
             textAlign: 'center',
             font: 'normal 14px Helvetica',
             name: 'betSum',
             shadow: new c.Shadow('#e8b075', 0, 0, 15)
         },
         coinsSum: {
-            x: 925,
-            y: 549,
+            x: 1160,
+            y: 595,
             textAlign: 'center',
-            font: 'normal 14px Helvetica',
+            font: 'normal 16px Helvetica',
             name: 'coinsSum',
             shadow: new c.Shadow('#e8b075', 0, 0, 15)
         },
         betValue: {
-            x: 350,
-            y: 601,
+            x: 543,
+            y: 603,
             textAlign: 'center',
-            font: 'normal 14px Helvetica',
+            font: 'normal 18px Helvetica',
             name: 'betValue',
             shadow: new c.Shadow('#e8b075', 0, 0, 15)
         },
         coinsValue: {
-            x: 854,
-            y: 601,
+            x: 1020,
+            y: 603,
             textAlign: 'center',
-            font: 'normal 14px Helvetica',
+            font: 'normal 18px Helvetica',
             name: 'coinsValue',
             shadow: new c.Shadow('#e8b075', 0, 0, 15)
         }
