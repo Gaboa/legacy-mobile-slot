@@ -20,7 +20,7 @@ import { freeSpin } from 'components/freeSpin/freeSpin';
 init.start({
     userID: 1,
     casinoID: 1,
-    mode: 'normal',
+    mode: 'fsBonus',
     isMobile: false
 });
 init.login();
@@ -76,24 +76,32 @@ buttons.start({
     buttonsLeftX: 14,
     buttonsWidth: 300
 });
-events.on('bg:main', buttons.drawButtons);
 events.on('buttons:startRoll', roll.startRoll);
-events.on('buttons:stopAutoplay', buttons.removeAutoplay);
-events.on('menu:changeSide', buttons.changeSide);
-events.on('autoplay:started', buttons.writeAutoplay);
-events.on('autoplay:count', buttons.updateAutoplay);
-events.on('autoplay:ended', buttons.removeAutoplay);
-events.on('roll:started', buttons.startRoll);
-events.on('roll:fastRoll', buttons.fastRoll);
-events.on('roll:ended', buttons.endRoll);
-events.on('initFreeSpins', buttons.changeVisibility);
-events.on('finishFreeSpins', buttons.changeVisibility);
-events.on('finishFreeSpins', buttons.removeAutoplay);
+if (storage.read('isMobile')) {
+    events.on('bg:main', buttons.drawButtons);
+    events.on('buttons:stopAutoplay', buttons.removeAutoplay);
+    events.on('menu:changeSide', buttons.changeSide);
+    events.on('autoplay:started', buttons.writeAutoplay);
+    events.on('autoplay:count', buttons.updateAutoplay);
+    events.on('autoplay:ended', buttons.removeAutoplay);
+    events.on('roll:started', buttons.startRoll);
+    events.on('roll:fastRoll', buttons.fastRoll);
+    events.on('roll:ended', buttons.endRoll);
+    events.on('initFreeSpins', buttons.changeVisibility);
+    events.on('finishFreeSpins', buttons.changeVisibility);
+    events.on('finishFreeSpins', buttons.removeAutoplay);
+}
 
 // Controls Module
 if (!storage.read('isMobile')) {
     // controls.start();
     events.on('bg:main', controls.drawControlsBG);
+    events.on('roll:started', controls.lockAllButtons);
+    events.on('roll:ended', controls.unlockAllButtons);
+    events.on('buttons:stopAutoplay', controls.removeAutoplay);
+    events.on('autoplay:started', controls.writeAutoplay);
+    events.on('autoplay:count', controls.updateAutoplay);
+    events.on('autoplay:ended', controls.removeAutoplay);
 }
 
 // Menu Module
