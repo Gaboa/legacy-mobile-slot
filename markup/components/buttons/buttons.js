@@ -39,9 +39,7 @@ export let buttons = (function () {
 
     function drawButtons() {
 
-        // if (storage.read('device') === 'desktop') {
-        //     return;
-        // }
+        if (!storage.read('isMobile')) return;
 
         const stage = storage.read('stage');
         const loader = storage.read('loadResult');
