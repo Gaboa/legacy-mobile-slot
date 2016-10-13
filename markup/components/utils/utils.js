@@ -68,6 +68,31 @@ export let utils = (function () {
         });
     }
 
+    function findObject(id) {
+
+        window.searchObject = id;
+        let stage = storage.read('stage');
+        stage.on('click', (event) => {
+            let x = event.rawX;
+            let y = event.rawY;
+            let objects = stage.getObjectsUnderPoint(x, y, 2);
+            let myObj = objects.filter((obj) => {
+                if (obj.name === window.searchObject) {
+                    obj.on('pressmove', (event) => {
+                        obj.x = event.stageX;
+                        obj.y = event.stageY;
+                    });
+                    obj.on('pressup', (event) => {
+                        console.warn( `${obj.name} X: ${event.rawX}`);
+                        console.warn( `${obj.name} Y: ${event.rawY}`);
+                    });
+                }
+            });
+            console.warn('Stage objects:', stage.getObjectsUnderPoint(x, y, 2));
+        });
+
+    }
+
     function lowBalance() {
         return storage.read('currentBalance').betSum > storage.read('currentBalance').coinsSum;
     }
@@ -83,6 +108,7 @@ export let utils = (function () {
         gameHeight,
         elementWidth,
         elementHeight,
-        lowBalance
+        lowBalance,
+        findObject
     };
 })();
