@@ -69,22 +69,35 @@ export let utils = (function () {
     }
 
     function findObject(id) {
-
+        $(window).off('keydown');
         window.searchObject = id;
         let stage = storage.read('stage');
         stage.on('click', (event) => {
             let x = event.rawX;
             let y = event.rawY;
-            let objects = stage.getObjectsUnderPoint(x, y, 2);
+            let objects = stage.getObjectsUnderPoint(x, y, 0);
             let myObj = objects.filter((obj) => {
                 if (obj.name === window.searchObject) {
-                    obj.on('pressmove', (event) => {
-                        obj.x = event.stageX;
-                        obj.y = event.stageY;
-                    });
-                    obj.on('pressup', (event) => {
-                        console.warn( `${obj.name} X: ${event.rawX}`);
-                        console.warn( `${obj.name} Y: ${event.rawY}`);
+                    console.warn('Object checked!');
+                    $(window).on('keydown', (event) => {
+                        switch (event.keyCode) {
+                            case 40: // Down
+                                obj.y += 1;
+                                console.warn(`${obj.name} coords: ${obj.x}, ${obj.y}`);
+                                break;
+                            case 38: // Up
+                                obj.y -= 1;
+                                console.warn(`${obj.name} coords: ${obj.x}, ${obj.y}`);
+                                break;
+                            case 37: // Left
+                                obj.x -= 1;
+                                console.warn(`${obj.name} coords: ${obj.x}, ${obj.y}`);
+                                break;
+                            case 39: // Left
+                                obj.x += 1;
+                                console.warn(`${obj.name} coords: ${obj.x}, ${obj.y}`);
+                                break;
+                        }
                     });
                 }
             });
