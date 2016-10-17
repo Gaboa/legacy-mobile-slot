@@ -1,4 +1,6 @@
 mixin canvas(data)
     #game
         canvas(id="stage" width="#{data.width}" height="#{data.height}")
-        iframe(src="http://casino.bossgs.org/userinfo/index.html" id="history" class="closed")
+        section(class="history closed")
+            iframe(src="http://casino.bossgs.org/userinfo/index.html" class="history__iframe")
+            button(class="history__button") Close
