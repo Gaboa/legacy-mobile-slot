@@ -458,7 +458,9 @@ export let freeSpin = (function () {
         buttonsContainer.visible = false;
         fsTotalWin = 0;
         drawFreeSpinsBG();
-        events.trigger('menu:changeSide', 'right');
+        if (storage.readState('side') !== 'right') {
+            events.trigger('menu:changeSide', 'right');
+        }
     }
 
     function transitionFreeSpins(data) {
