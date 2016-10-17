@@ -180,6 +180,11 @@ function handleFastSpinClick() {
 }
 
 function handleHandModeClick() {
+    if (storage.readState('handMoving')) return;
+    storage.changeState('handMoving', true);
+    setTimeout(() => {
+        storage.changeState('handMoving', false);
+    }, 500)
     if (storage.readState('side') === 'left') {
         events.trigger('menu:changeSide', 'right');
         this.gotoAndStop('handMode_on');
