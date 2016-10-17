@@ -5,6 +5,7 @@ import { events } from 'components/events/events';
 const c = createjs;
 
 export function handleSpinClick() {
+    if (storage.readState('autoplay') === 'started') return;
     const buttonsCache = storage.read('stage').getChildByName('buttonsContainer').getChildByName('buttonsCache');
     let that = this;
     if (storage.readState('lockedMenu')) return;
@@ -34,9 +35,9 @@ export function handleSpinClick() {
 export function handleSoundClick() {
     const buttonsCache = storage.read('stage').getChildByName('buttonsContainer').getChildByName('buttonsCache');
     let that = this;
-    if (storage.readState('lockedMenu')) return;
+    // if (storage.readState('lockedMenu')) return;
 
-    if (storage.readState('roll') !== 'started') {
+    // if (storage.readState('roll') !== 'started') {
         const sound = storage.readState('sound');
         if (sound) {
             that.gotoAndStop('soundOff');
@@ -48,7 +49,7 @@ export function handleSoundClick() {
             c.Sound.muted = false;
         }
         buttonsCache.updateCache();
-    }
+    // }
 }
 
 export function handleMenuClick() {
