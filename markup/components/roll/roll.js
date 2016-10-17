@@ -208,6 +208,8 @@ export let roll = (function () {
                     if (storage.readState('mode') !== 'fsBonus') {
                         storage.changeState('mode', 'fsBonus');
                     }
+                    createjs.Sound.play('spinSound');
+                    createjs.Sound.play('barabanSound');
                     rollData.nextScreen = getScreenData(response.Indexes, storage.read('fsWheels'));
                     drawScreen(rollData.currentScreen, rollData.nextScreen);
                     rollAnimation = new TimelineMax();
