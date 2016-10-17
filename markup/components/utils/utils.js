@@ -5,7 +5,7 @@ import { storage } from 'components/storage/storage';
 // Модуль утилит
 export let utils = (function () {
 
-    const serviceUrl = 'http://gameservice.bossgs.org/testslot/SlotService.svc/';
+    const serviceUrl = 'http://gameservice.bossgs.org/devslot/SlotService.svc/';
     const canvasWidth = 1280;
     const canvasHeight = 720;
     const gameWidth = 960;
